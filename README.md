@@ -11,14 +11,14 @@ static files and served free from GitHub Pages at <https://getmycv.github.io>.
 | Framework | Next.js 15 (App Router) + TypeScript, `output: 'export'` |
 | Styling | Tailwind CSS, light and dark themes |
 | Forms | React Hook Form + Zod, validated per step |
-| Order storage | Supabase Postgres (insert-only via row-level security) |
-| Uploads | Supabase Storage (private bucket) |
+| Orders | Web3Forms (email), or the Cloudflare Worker in `/worker` (D1) |
+| Uploads | Cloudflare R2, only on the Worker path |
 | Analytics | Optional, cookieless (Plausible-compatible) |
 | Hosting | GitHub Pages via GitHub Actions |
 
 GitHub Pages serves static files only, so there are no API routes, no Server Actions
-and no image optimizer. Anything dynamic happens in the browser against Supabase, or
-in a Supabase Edge Function later.
+and no image optimizer. Order submission therefore happens from the browser, against
+whichever backend is configured.
 
 ## Running it locally
 
@@ -62,33 +62,69 @@ price or a phone number of its own.
 
 ### Before launch
 
-1. **Prices** — replace the placeholders in `content/pricing.ts`.
-2. **Contact details** — set the real WhatsApp number (digits only, no `+`), email
+1. **Contact details** — set the real WhatsApp number (digits only, no `+`), email
    and bank account in `content/site.ts`.
-3. **Testimonials** — replace the samples in `content/testimonials.ts` with real,
+2. **Testimonials** — replace the samples in `content/testimonials.ts` with real,
    permission-granted quotes.
-4. **Samples** — drop real screenshots into `public/samples/` and point
+3. **Samples** — drop real screenshots into `public/samples/` and point
    `content/samples.ts` at the live demo URLs.
 
-## Supabase setup
+## Where orders go
 
-1. Create a free Supabase project.
-2. Run `supabase/schema.sql` in the SQL editor. It creates the `orders` table, the
-   private `order-uploads` bucket, and the row-level security policies.
-3. Copy the project URL and the anon key into `.env.local`, and add both as
-   repository secrets named `NEXT_PUBLIC_SUPABASE_URL` and
-   `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+Submission is pluggable, in `lib/order-api.ts`. It picks the first configured
+option and always degrades rather than breaking:
 
-The anon key is public by design — it is inlined into the static bundle. What keeps
-orders safe is the row-level security policy: the anon role may `INSERT` and nothing
-else, so the browser can place an order but can never read one back. Reading and
-updating orders happens in the Supabase dashboard, which uses the service role.
+| # | Backend | Set via | What you get |
+| --- | --- | --- | --- |
+| 1 | Cloudflare Worker + D1 | `NEXT_PUBLIC_ORDERS_API` | Real database, server-side price checks, CV uploads |
+| 2 | Web3Forms | `site.web3formsKey` or `NEXT_PUBLIC_WEB3FORMS_KEY` | Each order emailed to you, no backend to run |
+| 3 | Neither | — | Order still gets a reference and a prefilled WhatsApp message |
 
-To be emailed about new orders, add a Database Webhook on `orders` (insert) pointing
-at your email service or a Supabase Edge Function.
+### Option 2: Web3Forms (no backend)
 
-If the environment variables are absent, the order form still works: it produces a
-reference and hands the visitor a prefilled WhatsApp message instead of failing.
+1. Get a free access key at <https://web3forms.com> using the address that should
+   receive orders. The key arrives by email.
+2. Paste it into `web3formsKey` in `content/site.ts` and push.
+
+The key is public by design — it only permits submissions and can never read
+anything back — so committing it is safe.
+
+### Option 1: Cloudflare Worker + D1 (full database)
+
+The Worker in `/worker` is written and its D1 database already exists
+(`getmycv-orders`, id `e76e95c9-bb53-42ba-8852-a0ea32ebf056`, APAC region, schema
+in `worker/schema.sql`). It validates each order, **recomputes the price
+server-side** so a tampered browser cannot set its own total, and writes to D1.
+
+```bash
+cd worker
+npm install
+npx wrangler secret put ADMIN_TOKEN     # any long random string
+npx wrangler deploy
+```
+
+Then set the repository variable `NEXT_PUBLIC_ORDERS_API` to the deployed URL
+(e.g. `https://getmycv-orders.<subdomain>.workers.dev`) and push. It takes
+precedence over Web3Forms.
+
+Optional extras on this path:
+
+- **CV uploads** — enable R2 in the Cloudflare dashboard, create a bucket named
+  `getmycv-uploads`, uncomment the `[[r2_buckets]]` block in `worker/wrangler.toml`
+  and redeploy.
+- **Order emails** — `npx wrangler secret put RESEND_API_KEY` and
+  `npx wrangler secret put NOTIFY_EMAIL`.
+
+Reading orders back:
+
+```bash
+curl -H "Authorization: Bearer $ADMIN_TOKEN" https://<worker-url>/orders
+curl -X PATCH -H "Authorization: Bearer $ADMIN_TOKEN" \
+     -H 'Content-Type: application/json' -d '{"status":"Paid"}' \
+     https://<worker-url>/orders/GMC-2026-0042
+```
+
+Statuses are `New`, `Paid`, `In progress`, `Review`, `Delivered`.
 
 ## Deployment
 
@@ -105,7 +141,7 @@ makes routes like `/pricing/` resolve to real directories.
 ## Order flow
 
 ```
-/order/  →  4 steps  →  Supabase insert (+ file upload)  →  /order/success/?ref=…
+/order/  →  4 steps  →  Web3Forms email or Worker+D1  →  /order/success/?ref=…
 ```
 
 - The package can be preselected with `/order/?package=premium`.
@@ -163,9 +199,11 @@ upgrade to Next 16. Worth doing on the next maintenance pass.
 ## Not built yet
 
 - **Card payments.** Launch takes bank transfer. A gateway such as PayHere needs its
-  payment hash signed off the browser, which means a Supabase Edge Function.
-- **Admin dashboard.** Orders are managed in the Supabase dashboard for now.
-- **Turnstile.** The form has a honeypot; a CAPTCHA needs a server-side verification
-  step, so it belongs with the Edge Function work above.
-- **Upload retention job.** The privacy notice promises uploads are deleted after 90
-  days; schedule the query at the bottom of `supabase/schema.sql` with pg_cron.
+  payment hash signed off the browser — that belongs in the Worker, which already
+  has a place to hold the merchant secret.
+- **Admin dashboard.** The Worker exposes `GET /orders` and `PATCH /orders/:ref`
+  behind `ADMIN_TOKEN`; there is no UI on top of them yet.
+- **Turnstile.** The form has a honeypot and Web3Forms adds its own spam check.
+  A real CAPTCHA needs server-side verification, so it belongs in the Worker.
+- **Upload retention.** Only relevant on the Worker path; R2 lifecycle rules can
+  expire the `getmycv-uploads` bucket after 90 days to match the privacy notice.

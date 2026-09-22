@@ -97,9 +97,9 @@ export default function PrivacyPage() {
           <p>
             We do not sell your data and we never publish your CV, your name or your portfolio
             without asking you first. We use a small number of service providers to run the
-            business: a database and file storage provider that holds your order, an email provider
-            that delivers our messages, and WhatsApp if you choose to message us there. They process
-            data on our instructions only.
+            business: a form and email service that delivers your order to our inbox, our email
+            provider, and WhatsApp if you choose to message us there. They process data on our
+            instructions only.
           </p>
 
           <h2>Your rights</h2>
@@ -117,9 +117,10 @@ export default function PrivacyPage() {
 
           <h2>Security</h2>
           <p>
-            Your order is stored in a database that only we can read, over an encrypted connection.
-            Uploaded files sit in private storage that is not publicly listable. The order form on
-            this site can only add new orders — it cannot read anything back.
+            Your order is sent over an encrypted connection and delivered to an inbox only we can
+            read. This website stores nothing about you itself: it has no database of its own and
+            no way to read back an order once it has been sent. Files you send us by WhatsApp are
+            stored on our own devices and deleted on the schedule above.
           </p>
 
           <h2>Changes</h2>

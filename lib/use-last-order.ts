@@ -18,8 +18,8 @@ export const LAST_ORDER_KEY = 'getmycv:last-order';
 
 /**
  * The order the visitor just placed. It lives in sessionStorage because the
- * anon Supabase key is insert-only by design and cannot read the order back,
- * and because the reference in the URL alone carries no summary.
+ * site has no server to ask for the order back, and because the reference in
+ * the URL alone carries no summary.
  *
  * `ready` stays false until the effect runs, so the first paint matches the
  * server-rendered markup instead of flashing a "not found" state.

@@ -7,12 +7,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import OrderSummary from './OrderSummary';
 import {
-  ORDERS_TABLE,
-  UPLOADS_BUCKET,
-  isSupabaseConfigured,
-  supabase,
-} from '@/lib/supabase';
-import { createReference } from '@/lib/reference';
+  canUploadFiles,
+  isOrderBackendConfigured,
+  submitOrder,
+} from '@/lib/order-api';
 import { LAST_ORDER_KEY } from '@/lib/use-last-order';
 import {
   ACCEPTED_UPLOAD_TYPES,
@@ -126,60 +124,26 @@ export default function OrderForm() {
 
     setSubmitting(true);
     setSubmitError(null);
-    const ref = createReference();
 
     try {
-      const client = supabase();
-
-      if (client) {
-        const filePaths: string[] = [];
-        for (const file of files) {
-          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-          const path = `${ref}/${Date.now()}-${safeName}`;
-          const { error } = await client.storage.from(UPLOADS_BUCKET).upload(path, file, {
-            cacheControl: '3600',
-            upsert: false,
-          });
-          if (error) throw error;
-          filePaths.push(path);
-        }
-
-        const { error } = await client.from(ORDERS_TABLE).insert({
-          ref_code: ref,
-          package: data.packageId,
-          add_ons: data.addOnIds ?? [],
-          total_lkr: total,
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          location: data.location,
-          role: data.role,
-          experience: data.experience,
-          industry: data.industry,
-          notes: data.notes ?? '',
-          file_paths: filePaths,
-          consent_at: new Date().toISOString(),
-          status: 'New',
-        });
-        if (error) throw error;
-      }
+      const result = await submitOrder(data, total, files);
 
       // The success page reads this to show the summary without a round trip.
       sessionStorage.setItem(
         LAST_ORDER_KEY,
         JSON.stringify({
-          ref,
+          ref: result.ref,
           packageId: data.packageId,
           addOnIds: data.addOnIds ?? [],
           total,
           name: data.name,
           email: data.email,
-          stored: Boolean(client),
-          whatsapp: whatsappFallback(ref, data),
+          stored: result.stored,
+          whatsapp: whatsappFallback(result.ref, data),
         }),
       );
 
-      router.push(`/order/success/?ref=${ref}`);
+      router.push(`/order/success/?ref=${result.ref}`);
     } catch (error) {
       console.error(error);
       setSubmitError(
@@ -429,10 +393,11 @@ export default function OrderForm() {
                   ))}
                 </ul>
               )}
-              {!isSupabaseConfigured && (
+              {!canUploadFiles && (
                 <p className="mt-2 text-xs text-amber">
-                  Uploads are not connected yet on this build — you can send files on WhatsApp after
-                  ordering.
+                  {isOrderBackendConfigured
+                    ? 'Files are not uploaded from this form — send them on WhatsApp after ordering and we will attach them to your reference.'
+                    : 'Uploads are not connected yet on this build — you can send files on WhatsApp after ordering.'}
                 </p>
               )}
             </div>

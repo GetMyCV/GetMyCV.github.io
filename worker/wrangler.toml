@@ -1,0 +1,24 @@
+name = "getmycv-orders"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+# The order database. Created in the APAC region, closest to Sri Lanka.
+[[d1_databases]]
+binding = "DB"
+database_name = "getmycv-orders"
+database_id = "e76e95c9-bb53-42ba-8852-a0ea32ebf056"
+
+[vars]
+# Browser origins allowed to place orders. Anything else is refused.
+ALLOWED_ORIGINS = "https://getmycv.github.io,http://localhost:3000"
+
+# Optional. Uncomment once R2 is enabled in the Cloudflare dashboard and the
+# bucket exists, then redeploy — the Worker starts accepting CV uploads.
+# [[r2_buckets]]
+# binding = "UPLOADS"
+# bucket_name = "getmycv-uploads"
+
+# Secrets are NOT set here. Set them once with:
+#   npx wrangler secret put ADMIN_TOKEN
+#   npx wrangler secret put RESEND_API_KEY   (optional, for order emails)
+#   npx wrangler secret put NOTIFY_EMAIL     (optional, where to send them)

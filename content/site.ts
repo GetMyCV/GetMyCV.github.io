@@ -15,6 +15,16 @@ export const site = {
     facebook: 'https://facebook.com/getmycv',
     linkedin: 'https://linkedin.com/company/getmycv',
   },
+  /**
+   * Web3Forms access key. Get one free at https://web3forms.com by entering the
+   * address that should receive orders — the key arrives by email.
+   *
+   * It is public by design (it only allows submissions, never reads), so it is
+   * safe to commit. Leave it empty and the order form falls back to WhatsApp.
+   * NEXT_PUBLIC_WEB3FORMS_KEY overrides this at build time if you prefer.
+   */
+  web3formsKey: '',
+
   // Replace with your real account before launch; shown on the success page.
   bank: {
     accountName: 'GetMyCv',

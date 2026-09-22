@@ -15,7 +15,9 @@ export type Package = {
 /**
  * Single source of truth for prices. The pricing page, the home page preview
  * and the order form all read from here, so the numbers can never drift apart.
- * Prices are placeholders — replace them before launch.
+ *
+ * These are the live prices. Changing a number here changes it everywhere,
+ * including the total the order form writes to the database.
  */
 export const packages: Package[] = [
   {

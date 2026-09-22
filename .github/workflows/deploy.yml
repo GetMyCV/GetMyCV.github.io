@@ -5,7 +5,7 @@ on:
     # The github-pages environment only accepts deployments from the repository's
     # default branch. Both are listed so the site deploys whichever one is default;
     # drop the claude/ branch once main is the default.
-    branches: [main, claude/getmycv-website-plan-wcc339]
+    branches: [main]
   workflow_dispatch:
 
 permissions:

@@ -2,9 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    # The github-pages environment only accepts deployments from the repository's
-    # default branch. Both are listed so the site deploys whichever one is default;
-    # drop the claude/ branch once main is the default.
+    # main is the default branch, which is the only branch the github-pages
+    # environment accepts deployments from.
     branches: [main]
   workflow_dispatch:
 

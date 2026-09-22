@@ -42,7 +42,11 @@ jobs:
           NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ${{ vars.NEXT_PUBLIC_PLAUSIBLE_DOMAIN }}
         run: npm run build
 
+      # enablement turns Pages on via the API if it is not already enabled,
+      # so a fresh clone of this repo deploys without a manual settings change.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:

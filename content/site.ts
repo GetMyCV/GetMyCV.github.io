@@ -23,7 +23,7 @@ export const site = {
    * safe to commit. Leave it empty and the order form falls back to WhatsApp.
    * NEXT_PUBLIC_WEB3FORMS_KEY overrides this at build time if you prefer.
    */
-  web3formsKey: '',
+  web3formsKey: '52518f06-f2e7-4455-910d-9ab7dc0e46ce',
 
   // Replace with your real account before launch; shown on the success page.
   bank: {

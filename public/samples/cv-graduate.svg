@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" role="img" aria-label="Graduate CV preview">
+  <rect width="640" height="400" fill="#F8FAFC"/>
+  
+  <rect x="150" y="30" width="340" height="340" rx="10" fill="#FFFFFF" stroke="#0F2A4A" stroke-opacity="0.15"/>
+  <rect x="180" y="62" width="180" height="22" rx="6" fill="#0F2A4A" opacity="0.8"/>
+  <rect x="180" y="94" width="120" height="12" rx="6" fill="#14B8A6"/>
+  <rect x="180" y="130" width="280" height="9" rx="4.5" fill="#0F2A4A" opacity="0.2"/>
+  <rect x="180" y="148" width="250" height="9" rx="4.5" fill="#0F2A4A" opacity="0.2"/>
+  <rect x="180" y="182" width="90" height="11" rx="5" fill="#0F2A4A" opacity="0.55"/>
+  <rect x="180" y="204" width="280" height="9" rx="4.5" fill="#0F2A4A" opacity="0.2"/>
+  <rect x="180" y="222" width="265" height="9" rx="4.5" fill="#0F2A4A" opacity="0.2"/>
+  <rect x="180" y="240" width="200" height="9" rx="4.5" fill="#0F2A4A" opacity="0.2"/>
+  <rect x="180" y="276" width="90" height="11" rx="5" fill="#0F2A4A" opacity="0.55"/>
+  <rect x="180" y="298" width="280" height="9" rx="4.5" fill="#0F2A4A" opacity="0.2"/>
+  <rect x="180" y="316" width="230" height="9" rx="4.5" fill="#0F2A4A" opacity="0.2"/>
+  <text x="150" y="392" font-family="sans-serif" font-size="20" font-weight="700" fill="#0F2A4A">Graduate CV</text>
+</svg>

@@ -28,7 +28,7 @@ export const site = {
   // Replace with your real account before launch; shown on the success page.
   bank: {
     accountName: 'WAAD WIJESINGHE',
-    bank: 'SampathBank,
+    bank: 'Sampath Bank',
     accountNumber: '1001 5271 9600',
     branch: 'Colombo City Branch',
   },

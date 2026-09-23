@@ -21,6 +21,8 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # Needed to see whether the branch builder is still running (see the deploy job).
+  actions: read
 
 # Let a running deploy finish, but only keep the newest queued one.
 concurrency:
@@ -93,5 +95,37 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # While the Pages source is "Deploy from a branch" (see the note at the
+      # top of this file), GitHub's Jekyll builder deploys README.md in parallel
+      # with us and whichever finishes last is what visitors see. Waiting for it
+      # makes us deterministically last instead of winning a coin flip.
+      #
+      # Once the source is set to "GitHub Actions" that builder stops running,
+      # this step finds nothing and exits immediately, so it costs nothing. It
+      # can be deleted then.
+      - name: Wait for the branch builder, if it is still running
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.sha }}
+        run: |
+          for attempt in $(seq 1 40); do
+            running=$(curl -sS \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/runs?head_sha=$SHA&per_page=100" \
+              | jq '[.workflow_runs[]
+                     | select(.name == "pages build and deployment")
+                     | select(.status != "completed")] | length')
+            if [ "$running" = "0" ]; then
+              [ "$attempt" = "1" ] \
+                && echo "No branch builder running - Pages is served from this workflow." \
+                || echo "Branch builder finished; deploying over it."
+              exit 0
+            fi
+            echo "Branch builder still running ($running); waiting... ($attempt/40)"
+            sleep 10
+          done
+          echo "::warning::Branch builder did not finish in time; deploying anyway. It may overwrite this deployment."
+
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StickyOrderBar from '@/components/StickyOrderBar';
+import SiteChrome from '@/components/SiteChrome';
 import Analytics from '@/components/Analytics';
 import { site } from '@/content/site';
 import './globals.css';
@@ -98,11 +99,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <Header />
+        <SiteChrome>
+          <Header />
+        </SiteChrome>
         <main id="main" className="flex-1 pb-24 md:pb-0">
           {children}
         </main>
-        <Footer />
+        <SiteChrome>
+          <Footer />
+        </SiteChrome>
         <StickyOrderBar />
         <Analytics />
         <script

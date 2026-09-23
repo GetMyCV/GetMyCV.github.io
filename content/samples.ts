@@ -40,7 +40,7 @@ export const samples: Sample[] = [
     type: 'Portfolio',
     summary:
       'Single-page portfolio with project case studies, a skills matrix and a contact form. Loads in under a second on 4G.',
-    href: '#',
+    href: '/portfolio/software-developer/',
     image: '/samples/portfolio-software.svg',
     result: 'Built in 6 days',
   },
@@ -51,7 +51,7 @@ export const samples: Sample[] = [
     type: 'Portfolio',
     summary:
       'Campaign results front and centre, with before-and-after metrics and downloadable case studies.',
-    href: '#',
+    href: '/portfolio/digital-marketer/',
     image: '/samples/portfolio-marketing.svg',
     result: 'Built in 7 days',
   },
@@ -62,9 +62,42 @@ export const samples: Sample[] = [
     type: 'Portfolio',
     summary:
       'Project gallery with site photographs, drawings and a clear certification timeline.',
-    href: '#',
+    href: '/portfolio/civil-engineer/',
     image: '/samples/portfolio-engineering.svg',
     result: 'Built in 8 days',
+  },
+  {
+    id: 'portfolio-accounting',
+    title: 'Senior accountant portfolio',
+    profession: 'Accounting',
+    type: 'Portfolio',
+    summary:
+      'Finance-first layout: close timelines, controls work and cash released, with the numbers leading each entry.',
+    href: '/portfolio/senior-accountant/',
+    image: '/samples/portfolio-accounting.svg',
+    result: 'Built in 7 days',
+  },
+  {
+    id: 'portfolio-healthcare',
+    title: 'ICU nurse portfolio',
+    profession: 'Healthcare',
+    type: 'Portfolio',
+    summary:
+      'Structured for overseas recruiters — registrations, clinical competencies and language scores above the fold.',
+    href: '/portfolio/registered-nurse/',
+    image: '/samples/portfolio-healthcare.svg',
+    result: 'Built in 6 days',
+  },
+  {
+    id: 'portfolio-graduate',
+    title: 'Fresh graduate portfolio',
+    profession: 'Graduate',
+    type: 'Portfolio',
+    summary:
+      'No employment history to lead with, so projects, an internship and coursework carry the page instead.',
+    href: '/portfolio/graduate/',
+    image: '/samples/portfolio-graduate.svg',
+    result: 'Built in 5 days',
   },
   {
     id: 'cv-accounting',

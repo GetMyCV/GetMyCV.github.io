@@ -56,7 +56,8 @@ price or a phone number of its own.
 | `content/pricing.ts` | Packages, prices, turnarounds, add-ons — the single source of truth |
 | `content/services.ts` | The five services and their bullet points |
 | `content/faq.ts` | FAQ, which also feeds the FAQ structured data |
-| `content/samples.ts` | Portfolio and CV samples shown on `/portfolio/` |
+| `content/samples.ts` | The cards shown in the gallery at `/portfolio/` |
+| `content/portfolios.ts` | The demo portfolio pages at `/portfolio/<slug>/` |
 | `content/steps.ts` | The four "how it works" steps |
 | `content/testimonials.ts` | Client quotes |
 
@@ -68,6 +69,34 @@ price or a phone number of its own.
    permission-granted quotes.
 3. **Samples** — drop real screenshots into `public/samples/` and point
    `content/samples.ts` at the live demo URLs.
+
+## Demo portfolios
+
+`/portfolio/` is the gallery; each card links to a full sample portfolio page at
+`/portfolio/<slug>/`, one per profession — the thing a Premium client actually
+receives, filled with invented content.
+
+| Slug | Category |
+| --- | --- |
+| `software-developer` | Software |
+| `senior-accountant` | Accounting |
+| `digital-marketer` | Marketing |
+| `civil-engineer` | Engineering |
+| `registered-nurse` | Healthcare |
+| `graduate` | Graduate |
+
+They are generated from `content/portfolios.ts` by one template
+(`components/PortfolioDemo.tsx`), so adding a seventh category means adding a
+data entry and a matching card in `content/samples.ts` — no new page code.
+
+Two things about how they render:
+
+- **The GetMyCv header and footer are hidden on them** (`components/SiteChrome.tsx`),
+  so a visitor sees the client's own site rather than ours wrapped around it. A
+  banner at the top provides the way back and the call to action.
+- **Every person on them is invented**, and each page says so twice — in the
+  banner and in the footer. Each has its own accent colour, all checked to meet
+  WCAG AA on both white and their tinted backgrounds.
 
 ## Where orders go
 

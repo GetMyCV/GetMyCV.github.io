@@ -1,8 +1,10 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import type { Sample } from '@/content/samples';
 
 export default function SampleCard({ sample }: { sample: Sample }) {
   const isLive = sample.href !== '#';
+  const isInternal = sample.href.startsWith('/');
 
   return (
     <article className="card flex h-full flex-col overflow-hidden p-0">
@@ -36,7 +38,14 @@ export default function SampleCard({ sample }: { sample: Sample }) {
           ) : (
             <span />
           )}
-          {isLive ? (
+          {isLive && isInternal ? (
+            <Link
+              href={sample.href}
+              className="text-sm font-semibold text-teal-700 hover:underline dark:text-teal"
+            >
+              View sample →
+            </Link>
+          ) : isLive ? (
             <a
               href={sample.href}
               target="_blank"

@@ -8,7 +8,7 @@ export const site = {
   currency: 'LKR',
   email: 'hello@getmycv.lk',
   // Digits only, international format, no leading + (wa.me format).
-  whatsapp: '94770000000',
+  whatsapp: '94784464128',
   whatsappMessage: 'Hi GetMyCv, I would like to order a CV.',
   areaServed: 'Sri Lanka',
   social: {
@@ -27,10 +27,10 @@ export const site = {
 
   // Replace with your real account before launch; shown on the success page.
   bank: {
-    accountName: 'GetMyCv',
-    bank: 'Commercial Bank of Ceylon',
-    accountNumber: '0000 0000 0000',
-    branch: 'Colombo',
+    accountName: 'WAAD WIJESINGHE',
+    bank: 'SampathBank,
+    accountNumber: '1001 5271 9600',
+    branch: 'Colombo City Branch',
   },
 } as const;
 

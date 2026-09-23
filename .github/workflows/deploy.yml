@@ -37,6 +37,28 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # GitHub Pages is still set to "Deploy from a branch", so its Jekyll
+      # builder renders the repository root — which has no index.html, so
+      # README.md becomes the home page — and deploys it in parallel with this
+      # workflow. Whichever finishes last is what visitors get. Switching the
+      # source to "workflow" stops that builder for good. The job's existing
+      # `pages: write` permission is what authorises this.
+      - name: Serve Pages from this workflow, not the branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          status=$(curl -sS -o /tmp/pages.json -w '%{http_code}' -X PUT \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" \
+            -d '{"build_type":"workflow"}')
+          echo "PUT /pages build_type=workflow -> HTTP $status"
+          if [ "$status" != "204" ]; then
+            cat /tmp/pages.json 2>/dev/null || true
+            echo "::warning::Could not switch the Pages source automatically. Set Settings -> Pages -> Source to 'GitHub Actions' by hand, once."
+          fi
+
       # A missing or misnamed key is otherwise invisible: the site still builds
       # and still takes orders, but silently falls back to WhatsApp. This prints
       # whether a backend is configured without revealing the key itself.

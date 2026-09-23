@@ -138,8 +138,20 @@ Statuses are `New`, `Paid`, `In progress`, `Review`, `Delivered`.
 Pushing to `main` triggers `.github/workflows/deploy.yml`, which typechecks, lints,
 builds, and publishes `out/` to GitHub Pages.
 
-One-time setup: in the repository, go to **Settings → Pages** and set the source to
-**GitHub Actions**. The repository must be named `getmycv.github.io` to serve from
+**One-time setup, and it is not optional: Settings → Pages → Source must be set
+to "GitHub Actions".**
+
+If it is left on "Deploy from a branch", GitHub runs its Jekyll builder on every
+push in addition to this workflow. Jekyll renders the repository root, which has
+no `index.html`, so `README.md` becomes the home page — and it deploys in
+parallel with the real site. Both publish an artifact named `github-pages`, so
+whichever finishes last wins and the site flips between the real thing and the
+README.
+
+This cannot be automated: changing the Pages source needs repository admin
+rights, which the Actions `GITHUB_TOKEN` does not have (`403 Resource not
+accessible by integration`). You can tell it is still wrong if a run named
+"pages build and deployment" appears in the Actions tab after a push. The repository must be named `getmycv.github.io` to serve from
 the root URL without a base path.
 
 `public/.nojekyll` stops GitHub from hiding the `_next` folder. `trailingSlash: true`

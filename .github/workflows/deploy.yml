@@ -37,11 +37,32 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # A missing or misnamed key is otherwise invisible: the site still builds
+      # and still takes orders, but silently falls back to WhatsApp. This prints
+      # whether a backend is configured without revealing the key itself.
+      - name: Check order backend
+        env:
+          WEB3FORMS: ${{ secrets.NEXT_PUBLIC_WEB3FORMS_KEY || vars.NEXT_PUBLIC_WEB3FORMS_KEY }}
+          ORDERS_API: ${{ secrets.NEXT_PUBLIC_ORDERS_API || vars.NEXT_PUBLIC_ORDERS_API }}
+        run: |
+          if [ -n "$ORDERS_API" ]; then
+            echo "Orders backend: Worker API"
+          elif [ -n "$WEB3FORMS" ]; then
+            echo "Orders backend: Web3Forms (key length ${#WEB3FORMS})"
+          else
+            echo "::warning::No order backend configured - the form will fall back to WhatsApp."
+          fi
+
       - name: Build static site
         env:
-          # Optional. Both are public values, so repository variables are fine.
-          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ vars.NEXT_PUBLIC_WEB3FORMS_KEY }}
-          NEXT_PUBLIC_ORDERS_API: ${{ vars.NEXT_PUBLIC_ORDERS_API }}
+          # Read from a secret first, falling back to a repository variable, so
+          # it works whichever way the key was stored. Note that every
+          # NEXT_PUBLIC_ value is inlined into the published JavaScript: storing
+          # one as a secret keeps it out of logs and the repo, not out of the
+          # bundle. That is fine here — the Web3Forms key only permits
+          # submissions and can never read anything back.
+          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ secrets.NEXT_PUBLIC_WEB3FORMS_KEY || vars.NEXT_PUBLIC_WEB3FORMS_KEY }}
+          NEXT_PUBLIC_ORDERS_API: ${{ secrets.NEXT_PUBLIC_ORDERS_API || vars.NEXT_PUBLIC_ORDERS_API }}
           NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ${{ vars.NEXT_PUBLIC_PLAUSIBLE_DOMAIN }}
         run: npm run build
 

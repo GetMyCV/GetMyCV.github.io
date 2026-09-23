@@ -77,17 +77,24 @@ option and always degrades rather than breaking:
 | # | Backend | Set via | What you get |
 | --- | --- | --- | --- |
 | 1 | Cloudflare Worker + D1 | `NEXT_PUBLIC_ORDERS_API` | Real database, server-side price checks, CV uploads |
-| 2 | Web3Forms | `site.web3formsKey` or `NEXT_PUBLIC_WEB3FORMS_KEY` | Each order emailed to you, no backend to run |
+| 2 | Web3Forms | `NEXT_PUBLIC_WEB3FORMS_KEY` (repo secret or variable), or `site.web3formsKey` | Each order emailed to you, no backend to run |
 | 3 | Neither | — | Order still gets a reference and a prefilled WhatsApp message |
 
 ### Option 2: Web3Forms (no backend)
 
 1. Get a free access key at <https://web3forms.com> using the address that should
    receive orders. The key arrives by email.
-2. Paste it into `web3formsKey` in `content/site.ts` and push.
+2. Store it as the repository secret (or variable) `NEXT_PUBLIC_WEB3FORMS_KEY`.
+   Alternatively paste it into `web3formsKey` in `content/site.ts`.
 
-The key is public by design — it only permits submissions and can never read
-anything back — so committing it is safe.
+Either is fine. The key is public by design — it only permits submissions and
+can never read anything back — and note that a secret does not make it private
+here: every `NEXT_PUBLIC_` value is inlined into the published JavaScript. A
+secret keeps it out of the repository and the build logs, not out of the bundle.
+
+The deploy workflow prints which backend it found under "Check order backend",
+so a misnamed secret shows up as a warning instead of a site that quietly falls
+back to WhatsApp.
 
 ### Option 1: Cloudflare Worker + D1 (full database)
 

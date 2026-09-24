@@ -98,8 +98,9 @@ export default function PrivacyPage() {
             We do not sell your data and we never publish your CV, your name or your portfolio
             without asking you first. We use a small number of service providers to run the
             business: a form and email service that delivers your order to our inbox, our email
-            provider, and WhatsApp if you choose to message us there. They process data on our
-            instructions only.
+            provider, Stripe if you pay by card, and WhatsApp if you choose to message us there.
+            They process data on our instructions only. Card details are entered on Stripe’s own
+            page and never reach us.
           </p>
 
           <h2>Your rights</h2>

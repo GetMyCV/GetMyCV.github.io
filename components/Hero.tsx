@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { packages, formatLkr } from '@/content/pricing';
+import { packages, formatPrice } from '@/content/pricing';
 import { whatsappLink } from '@/content/site';
 
 const trustPoints = ['Delivered in 3–5 days', 'ATS-tested formatting', 'Revisions included'];
@@ -25,7 +25,7 @@ export default function Hero() {
           <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">
             We write ATS-friendly CVs, cover letters and LinkedIn profiles — and build the
             portfolio website that makes recruiters stop scrolling. From{' '}
-            {formatLkr(cheapest.price)}.
+            {formatPrice(cheapest.price)}.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">

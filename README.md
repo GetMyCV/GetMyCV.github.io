@@ -12,6 +12,7 @@ static files and served free from GitHub Pages at <https://getmycv.github.io>.
 | Styling | Tailwind CSS, light and dark themes |
 | Forms | React Hook Form + Zod, validated per step |
 | Orders | Web3Forms (email), or the Cloudflare Worker in `/worker` (D1) |
+| Payments | Stripe (cards), plus bank transfer |
 | Uploads | Cloudflare R2, only on the Worker path |
 | Analytics | Optional, cookieless (Plausible-compatible) |
 | Hosting | GitHub Pages via GitHub Actions |
@@ -162,6 +163,71 @@ curl -X PATCH -H "Authorization: Bearer $ADMIN_TOKEN" \
 
 Statuses are `New`, `Paid`, `In progress`, `Review`, `Delivered`.
 
+## Card payments (Stripe)
+
+After placing an order, the success page offers **Pay by card**, which opens
+Stripe's hosted checkout, alongside the bank details. Card data never touches
+this site.
+
+Prices are in **US dollars** (whole dollars, converted from the original LKR
+prices at about 329 LKR/USD in September 2026). The products live in the
+Stripe account in **live mode**:
+
+| Site id | Stripe product | Price id | USD |
+| --- | --- | --- | --- |
+| `starter` | Starter CV package | `price_1UJAGe2asN2vvApXuwCXLm9U` | 14 |
+| `professional` | Professional CV package | `price_1UJAGq2asN2vvApXzzSqCzvM` | 26 |
+| `premium` | Premium CV + portfolio package | `price_1UJAGu2asN2vvApXWB7w7wtT` | 53 |
+| `express` | Express delivery | `price_1UJAGw2asN2vvApXL0P8YxEy` | 9 |
+| `domain` | Custom domain setup | `price_1UJAGz2asN2vvApXYUt6RRKj` | 8 |
+| `revision` | Extra revision round | `price_1UJAH22asN2vvApXsBJYHFxl` | 5 |
+| `maintenance` | Portfolio maintenance (1 year) | `price_1UJAH62asN2vvApXpOoNLYwR` | 18 |
+
+The earlier LKR prices and Payment Links on the same products are archived.
+
+Each product carries `metadata.getmycv_id` matching the id in `content/pricing.ts`.
+
+How a card payment is started depends on where the order went:
+
+| Order backend | Card payment | How it is confirmed |
+| --- | --- | --- |
+| Web3Forms / WhatsApp | The package's **Payment Link**, with the reference as `client_reference_id` and the email prefilled. Add-ons appear as optional extras; the page tells the client which to tick. | Look the reference up under Payments in the Stripe dashboard. |
+| Worker | `POST /checkout` creates a **Checkout Session** for exactly the stored order. | The webhook marks the order `Paid` when the amount matches. |
+
+The Payment Links (one per package, redirecting back to
+`/order/success/?paid=1`) work today with nothing to deploy. `?paid=1` only
+changes what the page says; always check the dashboard before starting work.
+
+**Changing a price** means changing it in three places: create a new Price on
+the product in Stripe (prices are immutable), then update `content/pricing.ts`
+and `STRIPE_PRICES`/`PACKAGES`/`ADD_ONS` in `worker/src/index.ts`. The Payment
+Links point at specific prices, so they need a new link too (or edit the link's
+line items in the dashboard).
+
+### Enabling card payments on the Worker
+
+```bash
+cd worker
+npx wrangler secret put STRIPE_SECRET_KEY       # a restricted key (rk_live_…) with
+                                                # Checkout Sessions: write is enough
+npx wrangler deploy
+```
+
+Then, in the Stripe dashboard → Developers → Webhooks, add an endpoint at
+`https://<worker-url>/stripe/webhook` for `checkout.session.completed` and
+`checkout.session.async_payment_succeeded`, and store its signing secret:
+
+```bash
+npx wrangler secret put STRIPE_WEBHOOK_SECRET   # whsec_…
+```
+
+The webhook verifies Stripe's signature and only marks an order `Paid` when
+Stripe collected exactly its stored total in USD. It also catches Payment Link
+payments that carry a Worker order's reference. The `stripe_session_id` and
+`paid_at` columns it writes are already on `getmycv-orders`
+(`worker/migrations/0002_stripe_payments.sql`). The `total_lkr` column keeps
+its old name but now stores whole US dollars.
+
 ## Deployment
 
 Pushing to `main` triggers `.github/workflows/deploy.yml`, which typechecks, lints,
@@ -246,9 +312,6 @@ upgrade to Next 16. Worth doing on the next maintenance pass.
 
 ## Not built yet
 
-- **Card payments.** Launch takes bank transfer. A gateway such as PayHere needs its
-  payment hash signed off the browser — that belongs in the Worker, which already
-  has a place to hold the merchant secret.
 - **Admin dashboard.** The Worker exposes `GET /orders` and `PATCH /orders/:ref`
   behind `ADMIN_TOKEN`; there is no UI on top of them yet.
 - **Turnstile.** The form has a honeypot and Web3Forms adds its own spam check.

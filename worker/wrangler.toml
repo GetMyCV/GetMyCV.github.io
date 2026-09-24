@@ -22,3 +22,5 @@ ALLOWED_ORIGINS = "https://getmycv.github.io,http://localhost:3000"
 #   npx wrangler secret put ADMIN_TOKEN
 #   npx wrangler secret put RESEND_API_KEY   (optional, for order emails)
 #   npx wrangler secret put NOTIFY_EMAIL     (optional, where to send them)
+#   npx wrangler secret put STRIPE_SECRET_KEY      (card payments: sk_live_… or rk_live_…)
+#   npx wrangler secret put STRIPE_WEBHOOK_SECRET  (whsec_… from the webhook endpoint)

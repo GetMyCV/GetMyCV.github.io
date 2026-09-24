@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
+import CardPayment, { CardPaymentSkeleton } from '@/components/CardPayment';
 import OrderReference, { ReferenceSkeleton } from '@/components/OrderReference';
 import OrderSummaryPanel from '@/components/OrderSummaryPanel';
 import WhatsAppSlipButton from '@/components/WhatsAppSlipButton';
@@ -41,7 +42,7 @@ export default function OrderSuccessPage() {
 
           <h1 className="mt-5 text-2xl sm:text-3xl">Order received</h1>
           <p className="mt-3 max-w-xl text-navy-700/80 dark:text-slate-300">
-            Thank you. Keep the reference below — you will need it when you send your payment slip.
+            Thank you. Keep the reference below — it links your payment to your order.
           </p>
 
           <div className="mt-6">
@@ -57,7 +58,15 @@ export default function OrderSuccessPage() {
                 1
               </span>
               <div>
-                <h3 className="text-base">Transfer the payment</h3>
+                <h3 className="text-base">Pay for your order</h3>
+                <div className="mt-3">
+                  <Suspense fallback={<CardPaymentSkeleton />}>
+                    <CardPayment />
+                  </Suspense>
+                </div>
+                <p className="mt-4 text-sm font-semibold text-navy dark:text-white">
+                  Or pay by bank transfer
+                </p>
                 <div className="mt-1.5 text-sm leading-relaxed text-navy-700/80 dark:text-slate-300">
                   <span className="block">{site.bank.bank}</span>
                   <span className="block">Account name: {site.bank.accountName}</span>
@@ -75,10 +84,11 @@ export default function OrderSuccessPage() {
                 2
               </span>
               <div>
-                <h3 className="text-base">Send us the slip</h3>
+                <h3 className="text-base">Bank transfer? Send us the slip</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-navy-700/80 dark:text-slate-300">
                   WhatsApp a photo of the slip with your reference. We confirm within a few hours
-                  during working days.
+                  during working days. Paid by card? Skip this — we see card payments straight
+                  away.
                 </p>
               </div>
             </li>

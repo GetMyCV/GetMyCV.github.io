@@ -75,7 +75,7 @@ async function submitToWeb3Forms(
       Reference: ref,
       Package: packageName(values.packageId),
       'Add-ons': addOnNames(values.addOnIds ?? []).join(', ') || 'None',
-      Total: `LKR ${total.toLocaleString()}`,
+      Total: `USD ${total.toLocaleString()}`,
       Name: values.name,
       Email: values.email,
       Phone: values.phone,

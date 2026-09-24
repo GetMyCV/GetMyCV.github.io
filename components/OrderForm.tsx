@@ -19,7 +19,7 @@ import {
   validateUpload,
   type OrderValues,
 } from '@/lib/order-schema';
-import { addOns, calculateTotal, formatLkr, getPackage, packages } from '@/content/pricing';
+import { addOns, calculateTotal, formatPrice, getPackage, packages } from '@/content/pricing';
 import { site, whatsappLink } from '@/content/site';
 
 const stepFields: Array<Array<keyof OrderValues>> = [
@@ -112,7 +112,7 @@ export default function OrderForm() {
         `Reference: ${ref}`,
         `Package: ${getPackage(data.packageId)?.name}`,
         `Add-ons: ${(data.addOnIds ?? []).map((id) => addOns.find((a) => a.id === id)?.name).join(', ') || 'none'}`,
-        `Total: ${formatLkr(total)}`,
+        `Total: ${formatPrice(total)}`,
         `Name: ${data.name}`,
         `Target role: ${data.role}`,
       ].join('\n'),
@@ -139,6 +139,7 @@ export default function OrderForm() {
           name: data.name,
           email: data.email,
           stored: result.stored,
+          via: result.via,
           whatsapp: whatsappFallback(result.ref, data),
         }),
       );
@@ -215,7 +216,7 @@ export default function OrderForm() {
                       )}
                     </span>
                     <span className="font-semibold text-navy dark:text-white">
-                      {formatLkr(pkg.price)}
+                      {formatPrice(pkg.price)}
                     </span>
                   </span>
                   <span className="mt-1 block text-sm text-navy-700/80 dark:text-slate-300">
@@ -248,7 +249,7 @@ export default function OrderForm() {
                   <span className="flex flex-wrap items-baseline justify-between gap-2">
                     <span className="font-semibold text-navy dark:text-white">{addOn.name}</span>
                     <span className="text-sm font-semibold text-navy dark:text-white">
-                      +{formatLkr(addOn.price)}
+                      +{formatPrice(addOn.price)}
                     </span>
                   </span>
                   <span className="mt-1 block text-sm text-navy-700/80 dark:text-slate-300">
@@ -484,7 +485,7 @@ export default function OrderForm() {
             </button>
           ) : (
             <button type="submit" disabled={submitting} className="btn-primary sm:px-10">
-              {submitting ? 'Placing order…' : `Place order · ${formatLkr(total)}`}
+              {submitting ? 'Placing order…' : `Place order · ${formatPrice(total)}`}
             </button>
           )}
         </div>
@@ -501,7 +502,7 @@ export default function OrderForm() {
             />
           </div>
           <p className="mt-4 border-t border-navy/10 pt-4 text-xs text-navy-700/70 dark:border-white/10 dark:text-slate-400">
-            You pay after ordering, by bank transfer. Nothing is charged on this page.
+            You pay after ordering, by card or bank transfer. Nothing is charged on this page.
           </p>
         </div>
       </aside>

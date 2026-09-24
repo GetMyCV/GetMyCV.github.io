@@ -3,13 +3,13 @@ import Section from '@/components/Section';
 import PricingCard from '@/components/PricingCard';
 import Faq from '@/components/Faq';
 import CallToAction from '@/components/CallToAction';
-import { addOns, formatLkr, packages } from '@/content/pricing';
+import { addOns, formatPrice, packages } from '@/content/pricing';
 import { pageMetadata } from '@/lib/metadata';
 
 export const metadata = pageMetadata({
   title: 'Pricing',
   description:
-    'Three CV and portfolio packages in LKR with turnaround times, what each includes, and add-ons such as express 48-hour delivery and custom domain setup.',
+    'Three CV and portfolio packages in US dollars with turnaround times, what each includes, and add-ons such as express 48-hour delivery and custom domain setup.',
   path: '/pricing/',
 });
 
@@ -26,7 +26,7 @@ const offersJsonLd = {
       offers: {
         '@type': 'Offer',
         price: pkg.price ?? undefined,
-        priceCurrency: 'LKR',
+        priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
       },
     },
@@ -39,7 +39,7 @@ export default function PricingPage() {
       <Section
         eyebrow="Pricing"
         title="Pick the package that matches the job you want"
-        intro="Prices are in Sri Lankan rupees and include everything listed — revisions, editable files and delivery."
+        intro="Prices are in US dollars and include everything listed — revisions, editable files and delivery."
       >
         <div className="grid gap-6 md:grid-cols-3">
           {packages.map((pkg) => (
@@ -63,7 +63,7 @@ export default function PricingPage() {
       >
         <div className="overflow-hidden rounded-2xl border border-navy/10 bg-white dark:border-white/10 dark:bg-white/5">
           <table className="w-full text-left text-sm">
-            <caption className="sr-only">Add-on services and prices in Sri Lankan rupees</caption>
+            <caption className="sr-only">Add-on services and prices in US dollars</caption>
             <thead className="bg-navy-50 text-navy dark:bg-white/10 dark:text-white">
               <tr>
                 <th scope="col" className="px-5 py-3 font-semibold">Add-on</th>
@@ -84,7 +84,7 @@ export default function PricingPage() {
                     {addOn.description}
                   </td>
                   <td className="whitespace-nowrap px-5 py-4 text-right font-semibold text-navy dark:text-white">
-                    {formatLkr(addOn.price)}
+                    {formatPrice(addOn.price)}
                   </td>
                 </tr>
               ))}

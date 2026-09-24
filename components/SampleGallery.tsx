@@ -2,22 +2,57 @@
 
 import { useMemo, useState } from 'react';
 import SampleCard from './SampleCard';
-import { professions, samples, type Profession } from '@/content/samples';
+import { professions, samples, type Profession, type Sample } from '@/content/samples';
 
 type Filter = 'All' | Profession;
+type Kind = 'All' | Sample['type'];
+
+const kinds: { value: Kind; label: string }[] = [
+  { value: 'All', label: 'Everything' },
+  { value: 'CV', label: 'CVs' },
+  { value: 'Portfolio', label: 'Portfolios' },
+];
 
 export default function SampleGallery() {
   const [filter, setFilter] = useState<Filter>('All');
+  const [kind, setKind] = useState<Kind>('All');
 
   const filters: Filter[] = useMemo(
     () => ['All', ...professions.filter((p) => samples.some((s) => s.profession === p))],
     [],
   );
 
-  const visible = filter === 'All' ? samples : samples.filter((s) => s.profession === filter);
+  const visible = samples.filter(
+    (s) => (filter === 'All' || s.profession === filter) && (kind === 'All' || s.type === kind),
+  );
 
   return (
     <div>
+      <div
+        role="group"
+        aria-label="Show CVs, portfolios or both"
+        className="mb-4 inline-flex rounded-xl border border-navy/15 bg-white p-1 dark:border-white/15 dark:bg-white/5"
+      >
+        {kinds.map((option) => {
+          const active = option.value === kind;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => setKind(option.value)}
+              aria-pressed={active}
+              className={`min-h-[40px] rounded-lg px-4 text-sm font-semibold transition-colors ${
+                active
+                  ? 'bg-teal text-navy-900'
+                  : 'text-navy-700 hover:bg-navy-50 dark:text-slate-200 dark:hover:bg-white/10'
+              }`}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+
       <div
         role="group"
         aria-label="Filter samples by profession"

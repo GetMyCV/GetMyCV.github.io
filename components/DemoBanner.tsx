@@ -5,9 +5,15 @@ import Link from 'next/link';
  * describe invented people, and nobody should mistake one for a real person's
  * site. It doubles as the route back into the shop.
  */
-export default function DemoBanner({ profession }: { profession: string }) {
+export default function DemoBanner({
+  profession,
+  kind = 'portfolio',
+}: {
+  profession: string;
+  kind?: 'portfolio' | 'CV';
+}) {
   return (
-    <div className="sticky top-0 z-50 border-b border-navy-800 bg-navy text-white">
+    <div data-demo-banner className="sticky top-0 z-50 border-b border-navy-800 bg-navy text-white">
       <div className="container-page flex flex-wrap items-center gap-x-4 gap-y-2 py-2.5 text-sm">
         <span className="flex items-center gap-2 font-semibold">
           <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 text-teal" fill="currentColor" aria-hidden="true">
@@ -17,7 +23,7 @@ export default function DemoBanner({ profession }: { profession: string }) {
               clipRule="evenodd"
             />
           </svg>
-          Sample {profession.toLowerCase()} portfolio
+          Sample {profession.toLowerCase()} {kind}
         </span>
         <span className="text-slate-300">
           Built by GetMyCv. The person shown here is invented.

@@ -6,7 +6,7 @@ import { pageMetadata } from '@/lib/metadata';
 export const metadata = pageMetadata({
   title: 'Portfolio and CV samples',
   description:
-    'Live portfolio websites we built and anonymised CV samples across software, accounting, marketing, engineering, healthcare and graduate roles.',
+    'Live portfolio websites and one-page ATS-friendly CV templates, with previews and PDFs, across software, accounting, marketing, engineering, healthcare and graduate roles.',
   path: '/portfolio/',
 });
 
@@ -16,7 +16,7 @@ export default function PortfolioPage() {
       <Section
         eyebrow="Sample work"
         title="Proof, not promises"
-        intro="Live demo portfolios and anonymised CVs. Names and employers are changed; the structure and writing are exactly what you would receive."
+        intro="Live demo portfolios and one-page CV templates. Click any card for a full-size preview, or download a CV as a PDF. The people are invented; the structure and writing are exactly what you would receive."
       >
         <SampleGallery />
       </Section>

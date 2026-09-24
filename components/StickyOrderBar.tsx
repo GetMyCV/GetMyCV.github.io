@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { whatsappLink } from '@/content/site';
-import { isPortfolioDemo } from '@/lib/routes';
+import { isSampleDemo } from '@/lib/routes';
 
 /**
  * Mobile-only bottom bar. Hidden on the order flow itself, where the form's own
@@ -11,7 +11,7 @@ import { isPortfolioDemo } from '@/lib/routes';
  */
 export default function StickyOrderBar() {
   const pathname = usePathname();
-  if (pathname?.startsWith('/order') || isPortfolioDemo(pathname)) return null;
+  if (pathname?.startsWith('/order') || isSampleDemo(pathname)) return null;
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-navy/10 bg-white/95 backdrop-blur dark:border-white/10 dark:bg-navy-900/95 md:hidden">

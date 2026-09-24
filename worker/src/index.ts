@@ -30,36 +30,40 @@ export interface Env {
  * free to send any total it likes, so the amount stored is the one this table
  * produces — never the one that arrived in the request.
  */
+/**
+ * Amounts are whole US dollars. The D1 column is still called total_lkr from
+ * when the site priced in rupees; it holds USD now.
+ */
 const PACKAGES: Record<string, { price: number; turnaround: string }> = {
-  starter: { price: 4500, turnaround: '3 days' },
-  professional: { price: 8500, turnaround: '5 days' },
-  premium: { price: 17500, turnaround: '7–10 days' },
+  starter: { price: 14, turnaround: '3 days' },
+  professional: { price: 26, turnaround: '5 days' },
+  premium: { price: 53, turnaround: '7–10 days' },
 };
 
 const ADD_ONS: Record<string, number> = {
-  express: 3000,
-  domain: 2500,
-  revision: 1500,
-  maintenance: 6000,
+  express: 9,
+  domain: 8,
+  revision: 5,
+  maintenance: 18,
 };
 
 /**
- * Stripe Price ids for the same packages and add-ons, in LKR. They must match
+ * Stripe Price ids for the same packages and add-ons, in USD. They must match
  * the amounts above: Stripe charges what the Price says, and the webhook only
  * marks an order Paid when the amount Stripe collected equals total_lkr.
  */
 const STRIPE_PRICES: Record<string, string> = {
-  starter: 'price_1UJA1C2asN2vvApXYNqzbzAH',
-  professional: 'price_1UJA1r2asN2vvApX7zZi77Xo',
-  premium: 'price_1UJA282asN2vvApXOv41ge4O',
-  express: 'price_1UJA2E2asN2vvApXbSt8xs9X',
-  domain: 'price_1UJA2I2asN2vvApXXkf8pAD3',
-  revision: 'price_1UJA2L2asN2vvApXI8WL3ZzQ',
-  maintenance: 'price_1UJA2N2asN2vvApXErfcwM1a',
+  starter: 'price_1UJAGe2asN2vvApXuwCXLm9U',
+  professional: 'price_1UJAGq2asN2vvApXzzSqCzvM',
+  premium: 'price_1UJAGu2asN2vvApXWB7w7wtT',
+  express: 'price_1UJAGw2asN2vvApXL0P8YxEy',
+  domain: 'price_1UJAGz2asN2vvApXYUt6RRKj',
+  revision: 'price_1UJAH22asN2vvApXsBJYHFxl',
+  maintenance: 'price_1UJAH62asN2vvApXpOoNLYwR',
 };
 
-/** LKR is a two-decimal currency in Stripe, so 4,500 rupees is 450000. */
-const toStripeAmount = (lkr: number) => lkr * 100;
+/** Stripe counts USD in cents, so $14 is 1400. */
+const toStripeAmount = (usd: number) => usd * 100;
 
 /** How long an unused webhook signature stays acceptable, per Stripe's guidance. */
 const WEBHOOK_TOLERANCE_SECONDS = 300;
@@ -193,7 +197,7 @@ async function notify(env: Env, ref: string, order: { name: string; email: strin
         text: [
           `Reference: ${ref}`,
           `Package: ${order.package}`,
-          `Total: LKR ${order.total.toLocaleString()}`,
+          `Total: USD ${order.total.toLocaleString()}`,
           `Name: ${order.name}`,
           `Email: ${order.email}`,
         ].join('\n'),
@@ -324,7 +328,7 @@ async function handleStripeEvent(env: Env, event: CheckoutSessionEvent) {
     .first<{ total_lkr: number }>();
   if (!order) return;
 
-  if (session.currency !== 'lkr' || session.amount_total !== toStripeAmount(order.total_lkr)) {
+  if (session.currency !== 'usd' || session.amount_total !== toStripeAmount(order.total_lkr)) {
     console.warn(`Payment for ${session.client_reference_id} does not match its total`, session.id);
     return;
   }

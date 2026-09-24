@@ -3,14 +3,14 @@ export type PackageId = 'starter' | 'professional' | 'premium';
 export type Package = {
   id: PackageId;
   name: string;
-  /** Price in LKR. Set to null while the price is still to be decided. */
+  /** Price in whole US dollars. Set to null while the price is still to be decided. */
   price: number | null;
   turnaround: string;
   summary: string;
   includes: string[];
   revisions: number;
   popular?: boolean;
-  /** Stripe Price for this package (LKR, one-time). Public, safe to commit. */
+  /** Stripe Price for this package (USD, one-time). Public, safe to commit. */
   stripePriceId: string;
   /**
    * Stripe Payment Link for this package, used for card payments when the
@@ -35,9 +35,9 @@ export const packages: Package[] = [
   {
     id: 'starter',
     name: 'Starter',
-    price: 4500,
-    stripePriceId: 'price_1UJA1C2asN2vvApXYNqzbzAH',
-    paymentLink: 'https://buy.stripe.com/bJeaEQg2B5RYaVQ3BCdUY00',
+    price: 14,
+    stripePriceId: 'price_1UJAGe2asN2vvApXuwCXLm9U',
+    paymentLink: 'https://buy.stripe.com/7sY8wIaIhcgm3tob44dUY03',
     turnaround: '3 days',
     summary: 'A clean, ATS-friendly CV that gets past the filters.',
     revisions: 1,
@@ -51,9 +51,9 @@ export const packages: Package[] = [
   {
     id: 'professional',
     name: 'Professional',
-    price: 8500,
-    stripePriceId: 'price_1UJA1r2asN2vvApX7zZi77Xo',
-    paymentLink: 'https://buy.stripe.com/6oU3codUta8e4xs5JKdUY01',
+    price: 26,
+    stripePriceId: 'price_1UJAGq2asN2vvApXzzSqCzvM',
+    paymentLink: 'https://buy.stripe.com/6oU5kw3fP1BI6FA6NOdUY04',
     turnaround: '5 days',
     summary: 'Everything in Starter, plus the extras recruiters actually read.',
     revisions: 2,
@@ -68,9 +68,9 @@ export const packages: Package[] = [
   {
     id: 'premium',
     name: 'Premium',
-    price: 17500,
-    stripePriceId: 'price_1UJA282asN2vvApXOv41ge4O',
-    paymentLink: 'https://buy.stripe.com/dRm00ccQp4NU7JEc88dUY02',
+    price: 53,
+    stripePriceId: 'price_1UJAGu2asN2vvApXWB7w7wtT',
+    paymentLink: 'https://buy.stripe.com/4gMcMY9Ed2FM9RMeggdUY05',
     turnaround: '7–10 days',
     summary: 'Your own portfolio website, live on the internet.',
     revisions: 3,
@@ -88,7 +88,7 @@ export type AddOn = {
   name: string;
   price: number;
   description: string;
-  /** Stripe Price for this add-on (LKR, one-time). */
+  /** Stripe Price for this add-on (USD, one-time). */
   stripePriceId: string;
 };
 
@@ -96,29 +96,29 @@ export const addOns: AddOn[] = [
   {
     id: 'express',
     name: 'Express delivery',
-    price: 3000,
-    stripePriceId: 'price_1UJA2E2asN2vvApXbSt8xs9X',
+    price: 9,
+    stripePriceId: 'price_1UJAGw2asN2vvApXL0P8YxEy',
     description: 'Your order moves to the front of the queue and ships in 48 hours.',
   },
   {
     id: 'domain',
     name: 'Custom domain setup',
-    price: 2500,
-    stripePriceId: 'price_1UJA2I2asN2vvApXXkf8pAD3',
+    price: 8,
+    stripePriceId: 'price_1UJAGz2asN2vvApXYUt6RRKj',
     description: 'We point your own domain (e.g. yourname.lk) at your portfolio. Domain fee not included.',
   },
   {
     id: 'revision',
     name: 'Extra revision round',
-    price: 1500,
-    stripePriceId: 'price_1UJA2L2asN2vvApXI8WL3ZzQ',
+    price: 5,
+    stripePriceId: 'price_1UJAH22asN2vvApXsBJYHFxl',
     description: 'One more round of edits after your included revisions are used.',
   },
   {
     id: 'maintenance',
     name: 'Portfolio maintenance (1 year)',
-    price: 6000,
-    stripePriceId: 'price_1UJA2N2asN2vvApXErfcwM1a',
+    price: 18,
+    stripePriceId: 'price_1UJAH62asN2vvApXpOoNLYwR',
     description: 'Content updates and fixes on your portfolio site for twelve months.',
   },
 ];
@@ -126,12 +126,12 @@ export const addOns: AddOn[] = [
 export const getPackage = (id: string) => packages.find((p) => p.id === id);
 export const getAddOn = (id: string) => addOns.find((a) => a.id === id);
 
-export const formatLkr = (value: number | null) =>
+export const formatPrice = (value: number | null) =>
   value === null
     ? 'Ask us'
-    : new Intl.NumberFormat('en-LK', {
+    : new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'LKR',
+        currency: 'USD',
         maximumFractionDigits: 0,
       }).format(value);
 

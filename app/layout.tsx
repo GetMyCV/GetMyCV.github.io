@@ -84,7 +84,7 @@ const organizationJsonLd = {
   email: site.email,
   telephone: `+${site.whatsapp}`,
   areaServed: site.areaServed,
-  priceRange: 'LKR',
+  priceRange: 'USD',
   serviceType: ['CV writing', 'Resume writing', 'Portfolio website development'],
   address: { '@type': 'PostalAddress', addressCountry: 'LK' },
 };

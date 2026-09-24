@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS orders (
   ref_code     TEXT    NOT NULL UNIQUE,
   package      TEXT    NOT NULL CHECK (package IN ('starter','professional','premium')),
   add_ons      TEXT    NOT NULL DEFAULT '[]',   -- JSON array of add-on ids
-  total_lkr    INTEGER NOT NULL CHECK (total_lkr >= 0),
+  total_lkr    INTEGER NOT NULL CHECK (total_lkr >= 0),  -- whole US dollars (name predates the switch from LKR)
   name         TEXT    NOT NULL,
   email        TEXT    NOT NULL,
   phone        TEXT    NOT NULL,

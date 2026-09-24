@@ -1,4 +1,4 @@
-import { addOns, formatLkr, getPackage } from '@/content/pricing';
+import { addOns, formatPrice, getPackage } from '@/content/pricing';
 
 type Props = {
   packageId: string;
@@ -18,7 +18,7 @@ export default function OrderSummary({ packageId, addOnIds, total }: Props) {
             {pkg?.name ?? 'Package'} package
           </dt>
           <dd className="tabular-nums text-navy-700 dark:text-slate-200">
-            {formatLkr(pkg?.price ?? null)}
+            {formatPrice(pkg?.price ?? null)}
           </dd>
         </div>
 
@@ -26,7 +26,7 @@ export default function OrderSummary({ packageId, addOnIds, total }: Props) {
           <div key={addOn.id} className="flex items-baseline justify-between gap-4">
             <dt className="text-navy-700/80 dark:text-slate-300">{addOn.name}</dt>
             <dd className="tabular-nums text-navy-700 dark:text-slate-200">
-              {formatLkr(addOn.price)}
+              {formatPrice(addOn.price)}
             </dd>
           </div>
         ))}
@@ -34,7 +34,7 @@ export default function OrderSummary({ packageId, addOnIds, total }: Props) {
         <div className="flex items-baseline justify-between gap-4 border-t border-navy/10 pt-3 dark:border-white/10">
           <dt className="font-heading text-base font-bold text-navy dark:text-white">Total</dt>
           <dd className="font-heading text-base font-bold tabular-nums text-teal-700 dark:text-teal">
-            {formatLkr(total)}
+            {formatPrice(total)}
           </dd>
         </div>
 

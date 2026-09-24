@@ -35,7 +35,7 @@ export default function TermsPage() {
           <h2>Payment</h2>
           <p>
             We take card payments through Stripe, and bank transfer or online banking. Prices are
-            in Sri Lankan rupees and include everything listed on the pricing page. Card payments
+            in US dollars and include everything listed on the pricing page. Card payments
             are confirmed automatically; for a transfer, send your payment slip on WhatsApp with
             your reference so we can match it quickly.
           </p>

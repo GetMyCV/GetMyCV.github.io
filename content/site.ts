@@ -5,7 +5,7 @@ export const site = {
     'Professional ATS-friendly CV writing, cover letters, LinkedIn makeovers and personal portfolio websites for Sri Lankan job seekers. Delivered in days, not weeks.',
   url: 'https://getmycv.github.io',
   locale: 'en_LK',
-  currency: 'LKR',
+  currency: 'USD',
   email: 'hello@getmycv.lk',
   // Digits only, international format, no leading + (wa.me format).
   whatsapp: '94784464128',

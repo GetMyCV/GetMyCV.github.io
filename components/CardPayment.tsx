@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { addOns, formatLkr } from '@/content/pricing';
+import { addOns, formatPrice } from '@/content/pricing';
 import { canPayByCard, cardPaymentUrl } from '@/lib/payments';
 import { useLastOrder } from '@/lib/use-last-order';
 
@@ -57,7 +57,7 @@ export default function CardPayment() {
         disabled={redirecting}
         className="btn-primary w-full disabled:opacity-70 sm:w-auto sm:px-8"
       >
-        {redirecting ? 'Opening secure checkout…' : `Pay ${formatLkr(order.total)} by card`}
+        {redirecting ? 'Opening secure checkout…' : `Pay ${formatPrice(order.total)} by card`}
       </button>
       <p className="mt-2 text-xs text-navy-700/70 dark:text-slate-400">
         Secure checkout by Stripe. Visa, Mastercard and Amex; your card details never touch our site.
@@ -65,7 +65,7 @@ export default function CardPayment() {
       {extrasToTick.length > 0 && (
         <p className="mt-2 text-sm text-navy-700/80 dark:text-slate-300">
           On the payment page, also tick <strong>{extrasToTick.join(', ')}</strong> so the total
-          comes to {formatLkr(order.total)}.
+          comes to {formatPrice(order.total)}.
         </p>
       )}
       {error && (

@@ -169,17 +169,21 @@ After placing an order, the success page offers **Pay by card**, which opens
 Stripe's hosted checkout, alongside the bank details. Card data never touches
 this site.
 
-The products live in the Stripe account in **live mode**, all in LKR:
+Prices are in **US dollars** (whole dollars, converted from the original LKR
+prices at about 329 LKR/USD in September 2026). The products live in the
+Stripe account in **live mode**:
 
-| Site id | Stripe product | Price id | LKR |
+| Site id | Stripe product | Price id | USD |
 | --- | --- | --- | --- |
-| `starter` | Starter CV package | `price_1UJA1C2asN2vvApXYNqzbzAH` | 4,500 |
-| `professional` | Professional CV package | `price_1UJA1r2asN2vvApX7zZi77Xo` | 8,500 |
-| `premium` | Premium CV + portfolio package | `price_1UJA282asN2vvApXOv41ge4O` | 17,500 |
-| `express` | Express delivery | `price_1UJA2E2asN2vvApXbSt8xs9X` | 3,000 |
-| `domain` | Custom domain setup | `price_1UJA2I2asN2vvApXXkf8pAD3` | 2,500 |
-| `revision` | Extra revision round | `price_1UJA2L2asN2vvApXI8WL3ZzQ` | 1,500 |
-| `maintenance` | Portfolio maintenance (1 year) | `price_1UJA2N2asN2vvApXErfcwM1a` | 6,000 |
+| `starter` | Starter CV package | `price_1UJAGe2asN2vvApXuwCXLm9U` | 14 |
+| `professional` | Professional CV package | `price_1UJAGq2asN2vvApXzzSqCzvM` | 26 |
+| `premium` | Premium CV + portfolio package | `price_1UJAGu2asN2vvApXWB7w7wtT` | 53 |
+| `express` | Express delivery | `price_1UJAGw2asN2vvApXL0P8YxEy` | 9 |
+| `domain` | Custom domain setup | `price_1UJAGz2asN2vvApXYUt6RRKj` | 8 |
+| `revision` | Extra revision round | `price_1UJAH22asN2vvApXsBJYHFxl` | 5 |
+| `maintenance` | Portfolio maintenance (1 year) | `price_1UJAH62asN2vvApXpOoNLYwR` | 18 |
+
+The earlier LKR prices and Payment Links on the same products are archived.
 
 Each product carries `metadata.getmycv_id` matching the id in `content/pricing.ts`.
 
@@ -218,10 +222,11 @@ npx wrangler secret put STRIPE_WEBHOOK_SECRET   # whsec_…
 ```
 
 The webhook verifies Stripe's signature and only marks an order `Paid` when
-Stripe collected exactly its stored total in LKR. It also catches Payment Link
+Stripe collected exactly its stored total in USD. It also catches Payment Link
 payments that carry a Worker order's reference. The `stripe_session_id` and
 `paid_at` columns it writes are already on `getmycv-orders`
-(`worker/migrations/0002_stripe_payments.sql`).
+(`worker/migrations/0002_stripe_payments.sql`). The `total_lkr` column keeps
+its old name but now stores whole US dollars.
 
 ## Deployment
 

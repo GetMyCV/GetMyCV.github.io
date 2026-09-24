@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { formatLkr, type Package } from '@/content/pricing';
+import { formatPrice, type Package } from '@/content/pricing';
 
 export default function PricingCard({ pkg }: { pkg: Package }) {
   return (
@@ -18,7 +18,7 @@ export default function PricingCard({ pkg }: { pkg: Package }) {
       <p className="mt-2 text-sm text-navy-700/80 dark:text-slate-300">{pkg.summary}</p>
 
       <p className="mt-5 font-heading text-3xl font-extrabold text-navy dark:text-white">
-        {formatLkr(pkg.price)}
+        {formatPrice(pkg.price)}
       </p>
       <p className="mt-1 text-sm text-navy-700/70 dark:text-slate-400">
         Delivered in {pkg.turnaround}

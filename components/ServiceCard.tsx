@@ -10,8 +10,8 @@ const icons: Record<Service['icon'], React.ReactNode> = {
 
 export default function ServiceCard({ service }: { service: Service }) {
   return (
-    <article className="card h-full">
-      <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-navy text-white dark:bg-teal dark:text-navy-900">
+    <article className="card card-hover group h-full">
+      <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-navy text-white transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110 dark:bg-teal dark:text-navy-900">
         <svg
           viewBox="0 0 24 24"
           className="h-6 w-6"

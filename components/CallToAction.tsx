@@ -13,10 +13,10 @@ export default function CallToAction({
   return (
     <section className="py-14 sm:py-20">
       <div className="container-page">
-        <div className="relative overflow-hidden rounded-3xl bg-navy px-6 py-12 text-center sm:px-12">
+        <div data-reveal="zoom" className="relative overflow-hidden rounded-3xl bg-navy px-6 py-12 text-center sm:px-12">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -bottom-20 -left-16 h-64 w-64 rounded-full bg-teal/20 blur-3xl"
+            className="pointer-events-none absolute -bottom-20 -left-16 h-64 w-64 animate-drift rounded-full bg-teal/20 blur-3xl"
           />
           <div className="relative">
             <h2 className="text-2xl text-white sm:text-3xl">{title}</h2>

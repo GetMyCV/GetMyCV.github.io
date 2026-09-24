@@ -78,7 +78,7 @@ export default function SampleGallery() {
         })}
       </div>
 
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div data-reveal-stagger className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((sample) => (
           <SampleCard key={sample.id} sample={sample} />
         ))}

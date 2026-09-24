@@ -41,7 +41,7 @@ export default function PricingPage() {
         title="Pick the package that matches the job you want"
         intro="Prices are in US dollars and include everything listed — revisions, editable files and delivery."
       >
-        <div className="grid gap-6 md:grid-cols-3">
+        <div data-reveal-stagger className="grid gap-6 md:grid-cols-3">
           {packages.map((pkg) => (
             <PricingCard key={pkg.id} pkg={pkg} />
           ))}
@@ -98,9 +98,9 @@ export default function PricingPage() {
         title="When your files land"
         intro="Counted in working days from the moment your payment is confirmed, not from when you place the order."
       >
-        <div className="grid gap-6 sm:grid-cols-3">
+        <div data-reveal-stagger className="grid gap-6 sm:grid-cols-3">
           {packages.map((pkg) => (
-            <div key={pkg.id} className="card">
+            <div key={pkg.id} className="card card-hover">
               <h3 className="text-base">{pkg.name}</h3>
               <p className="mt-2 font-heading text-2xl font-bold text-teal-700 dark:text-teal">
                 {pkg.turnaround}

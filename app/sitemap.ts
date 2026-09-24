@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { site } from '@/content/site';
 import { portfolios } from '@/content/portfolios';
+import { cvs } from '@/content/cvs';
 
 // Metadata routes must opt into static generation under `output: 'export'`.
 export const dynamic = 'force-static';
@@ -17,6 +18,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/portfolio/', priority: 0.8, changeFrequency: 'monthly' },
     ...portfolios.map((p) => ({
       path: `/portfolio/${p.slug}/`,
+      priority: 0.6,
+      changeFrequency: 'monthly' as const,
+    })),
+    ...cvs.map((cv) => ({
+      path: `/cv/${cv.slug}/`,
       priority: 0.6,
       changeFrequency: 'monthly' as const,
     })),

@@ -60,7 +60,7 @@ export default function HomePage() {
       <Section
         eyebrow="Sample work"
         title="See what you are paying for"
-        intro="Real portfolios we built and anonymised CV samples, filterable by profession."
+        intro="Sample portfolios and one-page CV templates. Click any card for a full-size preview."
       >
         <SampleStrip />
         <Link

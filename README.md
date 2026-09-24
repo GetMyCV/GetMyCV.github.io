@@ -36,14 +36,16 @@ npm run build       # static export into ./out
 npm run typecheck   # tsc --noEmit
 npm run lint        # next lint
 npm run brand       # regenerate logos, icons and the OG image from /brand
-npm run samples     # regenerate the placeholder sample previews
+npm run previews    # re-shoot sample preview images and CV PDFs (after a build)
 ```
 
-`npm run brand` and `npm run samples` need `sharp`, which is deliberately not a
-project dependency (it would slow every CI build for two scripts that rarely run):
+`npm run brand` needs `sharp` and `npm run previews` needs `playwright`. Neither
+is a project dependency (they would slow every CI build for scripts that rarely
+run):
 
 ```bash
 npm install --no-save sharp && npm run brand
+npm run build && npm install --no-save playwright && npm run previews
 ```
 
 ## Editing content
@@ -59,6 +61,7 @@ price or a phone number of its own.
 | `content/faq.ts` | FAQ, which also feeds the FAQ structured data |
 | `content/samples.ts` | The cards shown in the gallery at `/portfolio/` |
 | `content/portfolios.ts` | The demo portfolio pages at `/portfolio/<slug>/` |
+| `content/cvs.ts` | The sample CVs at `/cv/<slug>/`, and their PDFs |
 | `content/steps.ts` | The four "how it works" steps |
 | `content/testimonials.ts` | Client quotes |
 
@@ -68,8 +71,8 @@ price or a phone number of its own.
    and bank account in `content/site.ts`.
 2. **Testimonials** — replace the samples in `content/testimonials.ts` with real,
    permission-granted quotes.
-3. **Samples** — drop real screenshots into `public/samples/` and point
-   `content/samples.ts` at the live demo URLs.
+3. **Samples** — after editing any sample content, run `npm run previews` so the
+   gallery images and CV PDFs match.
 
 ## Demo portfolios
 
@@ -98,6 +101,44 @@ Two things about how they render:
 - **Every person on them is invented**, and each page says so twice — in the
   banner and in the footer. Each has its own accent colour, all checked to meet
   WCAG AA on both white and their tinted backgrounds.
+
+## Sample CVs
+
+Six one-page A4 CVs, one per profession, at `/cv/<slug>/`, in three layouts:
+
+| Slug | Layout | Accent |
+| --- | --- | --- |
+| `senior-accountant` | Classic: centred serif name, ruled sections, one column | blue |
+| `software-engineer` | Modern: tinted skills sidebar, headline numbers | teal |
+| `digital-marketer` | Executive: solid header band with three results | raspberry |
+| `civil-engineer` | Classic | amber |
+| `registered-nurse` | Executive | cyan |
+| `graduate` | Modern | violet |
+
+All six render from `content/cvs.ts` through one component
+(`components/CvDocument.tsx`). The same markup is shown on the page, printed to
+the downloadable PDF and screenshotted for the gallery, so the three never
+disagree. Every layout reads top to bottom in a single column underneath, which
+keeps them ATS-friendly; side columns are CSS grid only.
+
+On a phone the page scales the sheet down rather than reflowing it, so what you
+see is exactly what prints. Printing a `/cv/` page gives one clean A4 sheet.
+
+### Preview images
+
+Gallery thumbnails are real screenshots, not mock-ups. `npm run previews` serves
+`./out`, opens every sample in Chromium and writes to `public/samples/`:
+
+| File | Used for |
+| --- | --- |
+| `cv-<slug>.jpg` | CV card thumbnail |
+| `cv-<slug>-full.jpg` | Full-size preview (2×) when a card is clicked |
+| `cv-<slug>.pdf` | Download PDF |
+| `portfolio-<slug>.jpg` | Portfolio card thumbnail (first screen) |
+| `portfolio-<slug>-full.jpg` | Full-page preview when a card is clicked |
+
+It fails if any CV runs past its A4 page, so an over-long edit is caught before
+it ships. Set `CHROMIUM_PATH` to use a browser that is already installed.
 
 ## Where orders go
 

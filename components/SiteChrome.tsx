@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { isPortfolioDemo } from '@/lib/routes';
+import { isSampleDemo } from '@/lib/routes';
 
 /**
  * Hides the GetMyCv header and footer on demo portfolio pages, so a visitor
@@ -12,6 +12,6 @@ import { isPortfolioDemo } from '@/lib/routes';
  */
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  if (isPortfolioDemo(pathname)) return null;
+  if (isSampleDemo(pathname)) return null;
   return <>{children}</>;
 }

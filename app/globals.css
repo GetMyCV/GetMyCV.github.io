@@ -80,3 +80,30 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * CV sample pages print as exactly one A4 sheet: no margins, no on-screen
+ * scaling, no shadow. The same rules produce the downloadable sample PDFs.
+ */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  .sheet-scaler,
+  .sheet-scaler-inner {
+    width: auto !important;
+    height: auto !important;
+    transform: none !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

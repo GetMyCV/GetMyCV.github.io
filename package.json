@@ -9,7 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "brand": "node scripts/build-brand-assets.mjs",
-    "samples": "node scripts/build-sample-placeholders.mjs"
+    "previews": "node scripts/build-sample-previews.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

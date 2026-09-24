@@ -139,6 +139,7 @@ export default function OrderForm() {
           name: data.name,
           email: data.email,
           stored: result.stored,
+          via: result.via,
           whatsapp: whatsappFallback(result.ref, data),
         }),
       );
@@ -501,7 +502,7 @@ export default function OrderForm() {
             />
           </div>
           <p className="mt-4 border-t border-navy/10 pt-4 text-xs text-navy-700/70 dark:border-white/10 dark:text-slate-400">
-            You pay after ordering, by bank transfer. Nothing is charged on this page.
+            You pay after ordering, by card or bank transfer. Nothing is charged on this page.
           </p>
         </div>
       </aside>

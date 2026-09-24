@@ -12,6 +12,8 @@ export type StoredOrder = {
   email: string;
   stored: boolean;
   whatsapp: string;
+  /** Which backend took the order; decides how a card payment is started. */
+  via?: 'worker' | 'web3forms' | 'whatsapp';
 };
 
 export const LAST_ORDER_KEY = 'getmycv:last-order';

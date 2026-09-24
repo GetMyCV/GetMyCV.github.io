@@ -19,7 +19,7 @@ export const faqs: Faq[] = [
   {
     question: 'How do I pay?',
     answer:
-      'At the moment we take bank transfer or online banking. After you place an order you get a reference number and our account details, then you send the slip over WhatsApp. Card payments are coming soon.',
+      'By card or by bank transfer. After you place an order you get a reference number and a “Pay by card” button, which opens a secure Stripe checkout — Visa, Mastercard and Amex all work. If you would rather transfer, our account details are on the same page; send the slip over WhatsApp with your reference.',
   },
   {
     question: 'What if I do not like the draft?',

@@ -9,7 +9,7 @@ export const steps: Step[] = [
   {
     title: 'Confirm and pay',
     description:
-      'You get a reference number straight away. Transfer the payment and send us the slip on WhatsApp.',
+      'You get a reference number straight away. Pay by card through Stripe, or transfer and send us the slip on WhatsApp.',
   },
   {
     title: 'We build your draft',

@@ -18,8 +18,8 @@ export default function OrderPage() {
         <p className="eyebrow">Order</p>
         <h1 className="mt-2 text-2xl sm:text-3xl">Let’s get started</h1>
         <p className="mt-3 text-navy-700/80 dark:text-slate-300">
-          Four short steps, about three minutes. You will get a reference number and payment
-          instructions at the end — {site.name} only starts work once payment is confirmed.
+          Four short steps, about three minutes. At the end you get a reference number and can pay
+          by card or bank transfer — {site.name} only starts work once payment is confirmed.
         </p>
       </div>
 

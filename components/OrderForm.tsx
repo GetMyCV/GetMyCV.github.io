@@ -163,7 +163,7 @@ export default function OrderForm() {
             return (
               <li key={title} className="flex flex-1 flex-col gap-2">
                 <span
-                  className={`h-1.5 rounded-full ${
+                  className={`h-1.5 rounded-full transition-colors duration-500 ${
                     state === 'todo' ? 'bg-navy/15 dark:bg-white/15' : 'bg-teal'
                   }`}
                 />
@@ -183,7 +183,7 @@ export default function OrderForm() {
         </ol>
 
         {/* Step 1 — package and add-ons */}
-        <fieldset className={step === 0 ? 'block' : 'hidden'}>
+        <fieldset className={step === 0 ? 'block animate-step-in' : 'hidden'}>
           <legend className="text-xl font-bold text-navy dark:text-white">Choose your package</legend>
           <p className="mt-1 text-sm text-navy-700/80 dark:text-slate-300">
             You can change this later by messaging us before we start.
@@ -262,7 +262,7 @@ export default function OrderForm() {
         </fieldset>
 
         {/* Step 2 — contact details */}
-        <fieldset className={step === 1 ? 'block' : 'hidden'}>
+        <fieldset className={step === 1 ? 'block animate-step-in' : 'hidden'}>
           <legend className="text-xl font-bold text-navy dark:text-white">Your details</legend>
           <p className="mt-1 text-sm text-navy-700/80 dark:text-slate-300">
             We use these to send your files and to reach you about the draft.
@@ -316,7 +316,7 @@ export default function OrderForm() {
         </fieldset>
 
         {/* Step 3 — career info and uploads */}
-        <fieldset className={step === 2 ? 'block' : 'hidden'}>
+        <fieldset className={step === 2 ? 'block animate-step-in' : 'hidden'}>
           <legend className="text-xl font-bold text-navy dark:text-white">Career info</legend>
           <p className="mt-1 text-sm text-navy-700/80 dark:text-slate-300">
             The more specific you are, the less back-and-forth later.
@@ -406,7 +406,7 @@ export default function OrderForm() {
         </fieldset>
 
         {/* Step 4 — review and consent */}
-        <fieldset className={step === 3 ? 'block' : 'hidden'}>
+        <fieldset className={step === 3 ? 'block animate-step-in' : 'hidden'}>
           <legend className="text-xl font-bold text-navy dark:text-white">Review and confirm</legend>
 
           <div className="mt-5 card">

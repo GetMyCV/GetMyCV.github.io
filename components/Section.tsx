@@ -28,7 +28,7 @@ export default function Section({
     <section id={id} className={`${tones[tone]} py-14 sm:py-20 ${className}`}>
       <div className="container-page">
         {(eyebrow || title || intro) && (
-          <div className="mb-10 max-w-2xl">
+          <div data-reveal className="mb-10 max-w-2xl">
             {eyebrow && <p className="eyebrow">{eyebrow}</p>}
             {title && (
               <h2 className={`mt-2 text-2xl sm:text-3xl ${tone === 'navy' ? 'text-white' : ''}`}>

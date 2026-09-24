@@ -4,12 +4,12 @@ import { formatPrice, type Package } from '@/content/pricing';
 export default function PricingCard({ pkg }: { pkg: Package }) {
   return (
     <div
-      className={`card relative flex h-full flex-col ${
+      className={`card card-hover relative flex h-full flex-col ${
         pkg.popular ? 'border-teal ring-2 ring-teal/40' : ''
       }`}
     >
       {pkg.popular && (
-        <span className="absolute -top-3 left-6 rounded-full bg-amber px-3 py-1 text-xs font-bold uppercase tracking-wide text-navy-900">
+        <span className="absolute -top-3 left-6 animate-glow-pulse rounded-full bg-amber px-3 py-1 text-xs font-bold uppercase tracking-wide text-navy-900">
           Most popular
         </span>
       )}

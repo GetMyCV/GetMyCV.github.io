@@ -7,7 +7,7 @@ const featured = ['portfolio-software', 'cv-senior-accountant', 'portfolio-marke
 /** Home-page preview: three samples, horizontally scrollable on small screens. */
 export default function SampleStrip() {
   return (
-    <div className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0">
+    <div data-reveal-stagger className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0">
       {featured
         .map((id) => samples.find((s) => s.id === id))
         .filter((sample) => sample !== undefined)

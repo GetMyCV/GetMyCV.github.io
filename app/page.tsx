@@ -34,7 +34,7 @@ export default function HomePage() {
         title="Three things that get you interviews"
         intro="Most applications fail before a human reads them. We fix the three places that decide whether you make the shortlist."
       >
-        <div className="grid gap-6 md:grid-cols-3">
+        <div data-reveal-stagger className="grid gap-6 md:grid-cols-3">
           {headlineServices.map((service) => (
             <ServiceCard key={service.id} service={service} />
           ))}
@@ -78,7 +78,7 @@ export default function HomePage() {
         title="Clear prices, no surprises"
         intro="Every package includes revisions and the editable files. Add-ons are priced on the pricing page."
       >
-        <div className="grid gap-6 md:grid-cols-3">
+        <div data-reveal-stagger className="grid gap-6 md:grid-cols-3">
           {packages.map((pkg) => (
             <PricingCard key={pkg.id} pkg={pkg} />
           ))}

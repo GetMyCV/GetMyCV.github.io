@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import StickyOrderBar from '@/components/StickyOrderBar';
 import SiteChrome from '@/components/SiteChrome';
 import Analytics from '@/components/Analytics';
+import ScrollReveal from '@/components/ScrollReveal';
 import { site } from '@/content/site';
 import './globals.css';
 
@@ -89,9 +90,24 @@ const organizationJsonLd = {
   address: { '@type': 'PostalAddress', addressCountry: 'LK' },
 };
 
+/**
+ * Runs before first paint so revealed content never flashes visible-then-hidden.
+ * Skipped for reduced-motion visitors, and undone if the observer has not
+ * started a few seconds after load, so a script failure never hides content.
+ */
+const revealScript = `(function(){try{
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var r=document.documentElement;r.classList.add('reveal-ready');
+window.addEventListener('load',function(){setTimeout(function(){if(!window.__revealStarted)r.classList.remove('reveal-ready')},3000)});
+}catch(e){}})();`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${body.variable} ${heading.variable}`}>
+    // The reveal script adds a class to <html> before hydration.
+    <html lang="en" className={`${body.variable} ${heading.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: revealScript }} />
+      </head>
       <body className="flex min-h-screen flex-col">
         <a
           href="#main"
@@ -110,6 +126,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </SiteChrome>
         <StickyOrderBar />
         <Analytics />
+        <ScrollReveal />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}

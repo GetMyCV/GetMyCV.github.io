@@ -2,9 +2,9 @@ import { testimonials } from '@/content/testimonials';
 
 export default function Testimonials() {
   return (
-    <div className="grid gap-6 md:grid-cols-3">
+    <div data-reveal-stagger className="grid gap-6 md:grid-cols-3">
       {testimonials.map((t) => (
-        <figure key={t.name} className="card flex h-full flex-col">
+        <figure key={t.name} className="card card-hover flex h-full flex-col">
           <svg viewBox="0 0 24 24" className="h-7 w-7 text-teal" fill="currentColor" aria-hidden="true">
             <path d="M9.5 6C6.5 7.4 5 9.9 5 13.5V18h6v-6H8.2c.1-1.7.9-2.9 2.6-3.7L9.5 6Zm9 0c-3 1.4-4.5 3.9-4.5 7.5V18h6v-6h-2.8c.1-1.7.9-2.9 2.6-3.7L18.5 6Z" />
           </svg>

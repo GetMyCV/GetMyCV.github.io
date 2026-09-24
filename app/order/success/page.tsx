@@ -27,7 +27,7 @@ export default function OrderSuccessPage() {
     <div className="container-page py-10 sm:py-14">
       <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
         <div>
-          <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-teal/15 text-teal-700 dark:bg-teal/20 dark:text-teal">
+          <span className="inline-flex h-14 w-14 animate-pop items-center justify-center rounded-full bg-teal/15 text-teal-700 dark:bg-teal/20 dark:text-teal">
             <svg
               viewBox="0 0 24 24"
               className="h-8 w-8"
@@ -36,11 +36,11 @@ export default function OrderSuccessPage() {
               strokeWidth="2.2"
               aria-hidden="true"
             >
-              <path d="m5 13 4 4 10-10" strokeLinecap="round" strokeLinejoin="round" />
+              <path className="draw-stroke" d="m5 13 4 4 10-10" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
 
-          <h1 className="mt-5 text-2xl sm:text-3xl">Order received</h1>
+          <h1 className="mt-5 animate-fade-up text-2xl [animation-delay:150ms] sm:text-3xl">Order received</h1>
           <p className="mt-3 max-w-xl text-navy-700/80 dark:text-slate-300">
             Thank you. Keep the reference below — it links your payment to your order.
           </p>
@@ -52,7 +52,7 @@ export default function OrderSuccessPage() {
           </div>
 
           <h2 className="mt-10 text-xl">Next steps</h2>
-          <ol className="mt-4 space-y-4">
+          <ol data-reveal-stagger className="mt-4 space-y-4">
             <li className="card flex gap-4">
               <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-navy font-heading font-bold text-white dark:bg-teal dark:text-navy-900">
                 1

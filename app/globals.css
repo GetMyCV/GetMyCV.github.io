@@ -38,7 +38,19 @@
   }
 
   .btn-primary {
-    @apply btn bg-teal text-navy-900 hover:bg-teal-600 hover:text-white;
+    @apply btn relative isolate overflow-hidden bg-teal text-navy-900 shadow-sm transition-[background-color,color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:shadow-teal/30 active:translate-y-0 active:scale-[0.98];
+  }
+
+  /* A sheen that sweeps across the primary button on hover. */
+  .btn-primary::after {
+    content: '';
+    @apply pointer-events-none absolute inset-y-0 -left-1/2 -z-10 w-1/3 -skew-x-12 bg-white/35 opacity-0;
+    transition: transform 0.6s ease, opacity 0.2s ease;
+  }
+
+  .btn-primary:hover::after {
+    @apply opacity-100;
+    transform: translateX(650%) skewX(-12deg);
   }
 
   .btn-secondary {
@@ -51,6 +63,22 @@
 
   .card {
     @apply rounded-2xl border border-navy/10 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-white/5;
+  }
+
+  /* Lifts a card on hover. Kept separate so static cards (forms, summaries) stay still. */
+  .card-hover {
+    @apply transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-teal/40 hover:shadow-xl hover:shadow-navy/10 dark:hover:border-teal/40 dark:hover:shadow-black/30;
+  }
+
+  /* The sweep under "done right" in the hero. */
+  .hero-underline {
+    @apply relative inline-block;
+  }
+
+  .hero-underline::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 h-[0.12em] w-full origin-left rounded-full bg-teal;
+    animation: underline-sweep 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.7s both;
   }
 
   .label {
@@ -67,6 +95,95 @@
 
   .eyebrow {
     @apply text-sm font-semibold uppercase tracking-wider text-teal-700 dark:text-teal;
+  }
+}
+
+@keyframes underline-sweep {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Draws an SVG stroke, e.g. the tick on the order-received page. */
+.draw-stroke {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: draw-stroke 0.5s ease-out 0.35s forwards;
+}
+
+@keyframes draw-stroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/*
+ * Scroll reveal. Elements marked data-reveal (or the children of a
+ * data-reveal-stagger container) fade up as they enter the viewport.
+ *
+ * They are only hidden once the inline script in app/layout.tsx has added
+ * `reveal-ready` to <html>, which it skips for reduced-motion visitors. Without
+ * JavaScript, or if the observer never starts, everything simply shows.
+ */
+.reveal-ready [data-reveal],
+.reveal-ready [data-reveal-stagger] > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal-ready [data-reveal='zoom'] {
+  transform: scale(0.96);
+}
+
+.reveal-ready [data-reveal].is-revealed,
+.reveal-ready [data-reveal-stagger] > .is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* Once revealed, hand transforms back to hover effects: quick, no delay. */
+.reveal-ready [data-reveal].reveal-done,
+.reveal-ready [data-reveal-stagger] > .reveal-done {
+  transition:
+    transform 0.3s ease-out,
+    box-shadow 0.3s ease-out,
+    border-color 0.3s ease-out,
+    opacity 0.3s ease-out;
+  transition-delay: 0ms;
+}
+
+/* "How it works": connectors draw between cards, numbers pop, once revealed. */
+.step-connector {
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.45s;
+}
+
+.reveal-ready .step:not(.is-revealed) .step-connector {
+  transform: scaleX(0);
+}
+
+.reveal-ready .step.is-revealed .step-number {
+  animation: pop 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--reveal-delay, 0ms) + 150ms) both;
+}
+
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 

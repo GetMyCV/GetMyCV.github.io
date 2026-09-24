@@ -16,7 +16,7 @@ export default function SampleCard({ sample }: { sample: Sample }) {
   const isCv = sample.type === 'CV';
 
   return (
-    <article className="card group flex h-full flex-col overflow-hidden p-0">
+    <article className="card card-hover group flex h-full flex-col overflow-hidden p-0">
       <button
         type="button"
         onClick={() => setPreviewing(true)}

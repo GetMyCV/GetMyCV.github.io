@@ -42,10 +42,10 @@ export default function SamplePreviewDialog({
       // A click on the backdrop lands on the <dialog> element itself.
       onClick={(event) => event.target === event.currentTarget && onClose()}
       aria-labelledby={`${sample.id}-preview-title`}
-      className="m-0 h-full max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-navy-900/80 backdrop:backdrop-blur-sm sm:m-auto sm:h-[92vh] sm:w-[min(96vw,64rem)] sm:rounded-2xl"
+      className="m-0 h-full max-h-none w-full max-w-none bg-transparent p-0 backdrop:animate-fade-in backdrop:bg-navy-900/80 backdrop:backdrop-blur-sm sm:m-auto sm:h-[92vh] sm:w-[min(96vw,64rem)] sm:rounded-2xl"
     >
       {open && (
-        <div className="flex h-full flex-col overflow-hidden bg-white shadow-2xl dark:bg-navy-800 sm:rounded-2xl">
+        <div className="flex h-full animate-dialog-in flex-col overflow-hidden bg-white shadow-2xl dark:bg-navy-800 sm:rounded-2xl">
           <div className="flex flex-wrap items-center gap-3 border-b border-navy/10 px-4 py-3 dark:border-white/10 sm:px-5">
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal">

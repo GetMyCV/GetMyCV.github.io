@@ -1,11 +1,12 @@
 import { Suspense } from 'react';
 import OrderForm from '@/components/OrderForm';
 import OrderFormSkeleton from '@/components/OrderFormSkeleton';
+import { Breadcrumbs } from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/metadata';
 import { site } from '@/content/site';
 
 export const metadata = pageMetadata({
-  title: 'Place an order',
+  title: 'Order a Professional CV Online',
   description:
     'Order your CV, cover letter, LinkedIn makeover or portfolio website in four short steps. No account needed and nothing is charged on the form.',
   path: '/order/',
@@ -14,6 +15,7 @@ export const metadata = pageMetadata({
 export default function OrderPage() {
   return (
     <div className="container-page py-10 sm:py-14">
+      <Breadcrumbs trail={[{ name: 'Order', path: '/order/' }]} />
       <div className="max-w-2xl">
         <p className="eyebrow">Order</p>
         <h1 className="mt-2 text-2xl sm:text-3xl">Let’s get started</h1>

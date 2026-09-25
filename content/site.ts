@@ -2,7 +2,7 @@ export const site = {
   name: 'GetMyCv',
   tagline: 'Get your CV and portfolio done right',
   description:
-    'Professional ATS-friendly CV writing, cover letters, LinkedIn makeovers and personal portfolio websites for Sri Lankan job seekers. Delivered in days, not weeks.',
+    'Professional ATS-friendly CV writing, cover letters, LinkedIn makeovers and portfolio websites for Sri Lankan job seekers. Delivered in days, not weeks.',
   url: 'https://getmycv.github.io',
   locale: 'en_LK',
   currency: 'USD',
@@ -11,6 +11,12 @@ export const site = {
   whatsapp: '94784464128',
   whatsappMessage: 'Hi GetMyCv, I would like to order a CV.',
   areaServed: 'Sri Lanka',
+  /**
+   * Google Search Console ownership proof for the URL-prefix property
+   * https://getmycv.github.io/. Rendered as <meta name="google-site-verification">.
+   * The same property can also be verified by public/google6bd9d15b3ecc4bf4.html.
+   */
+  googleSiteVerification: '8yxUGaMetlVc24ha_G0xKeGCbbr0SRW7Rt4HdXPA4TE',
   social: {
     facebook: 'https://facebook.com/getmycv',
     linkedin: 'https://linkedin.com/company/getmycv',

@@ -1,11 +1,12 @@
 import Prose from '@/components/Prose';
+import { Breadcrumbs } from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/metadata';
 import { site, whatsappLink } from '@/content/site';
 
 export const metadata = pageMetadata({
-  title: 'Privacy notice',
+  title: 'Privacy Notice & Data Protection',
   description:
-    'What personal data GetMyCv collects when you place an order, why we collect it, how long we keep it, and how to ask for deletion under Sri Lanka’s Personal Data Protection Act.',
+    'What personal data GetMyCv collects, why, how long it is kept, and how to have it deleted under Sri Lanka’s Personal Data Protection Act.',
   path: '/privacy/',
 });
 
@@ -14,6 +15,7 @@ const updated = 'September 2026';
 export default function PrivacyPage() {
   return (
     <div className="container-page py-12 sm:py-16">
+      <Breadcrumbs trail={[{ name: 'Privacy notice', path: '/privacy/' }]} />
       <p className="eyebrow">Legal</p>
       <h1 className="mt-2 text-2xl sm:text-3xl">Privacy notice</h1>
       <p className="mt-2 text-sm text-navy-700/70 dark:text-slate-400">Last updated {updated}</p>

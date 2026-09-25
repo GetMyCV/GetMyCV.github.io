@@ -7,6 +7,8 @@ type SectionProps = {
   className?: string;
   /** Tints the section so alternating bands stay readable in both themes. */
   tone?: 'default' | 'muted' | 'navy';
+  /** The page's first section passes 'h1' so every page has exactly one. */
+  headingLevel?: 'h1' | 'h2';
 };
 
 const tones = {
@@ -23,6 +25,7 @@ export default function Section({
   children,
   className = '',
   tone = 'default',
+  headingLevel: Heading = 'h2',
 }: SectionProps) {
   return (
     <section id={id} className={`${tones[tone]} py-14 sm:py-20 ${className}`}>
@@ -31,9 +34,9 @@ export default function Section({
           <div data-reveal className="mb-10 max-w-2xl">
             {eyebrow && <p className="eyebrow">{eyebrow}</p>}
             {title && (
-              <h2 className={`mt-2 text-2xl sm:text-3xl ${tone === 'navy' ? 'text-white' : ''}`}>
+              <Heading className={`mt-2 text-2xl sm:text-3xl ${tone === 'navy' ? 'text-white' : ''}`}>
                 {title}
-              </h2>
+              </Heading>
             )}
             {intro && (
               <p

@@ -1,19 +1,22 @@
 import Section from '@/components/Section';
 import SampleGallery from '@/components/SampleGallery';
 import CallToAction from '@/components/CallToAction';
+import { Breadcrumbs } from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/metadata';
 
 export const metadata = pageMetadata({
-  title: 'Portfolio and CV samples',
+  title: 'CV Templates & Portfolio Website Samples',
   description:
-    'Live portfolio websites and one-page ATS-friendly CV templates, with previews and PDFs, across software, accounting, marketing, engineering, healthcare and graduate roles.',
+    'Preview one-page ATS-friendly CV templates and live portfolio websites for software, accounting, marketing, engineering, healthcare and graduate roles.',
   path: '/portfolio/',
 });
 
 export default function PortfolioPage() {
   return (
     <>
+      <Breadcrumbs trail={[{ name: 'Samples', path: '/portfolio/' }]} />
       <Section
+        headingLevel="h1"
         eyebrow="Sample work"
         title="Proof, not promises"
         intro="Live demo portfolios and one-page CV templates. Click any card for a full-size preview, or download a CV as a PDF. The people are invented; the structure and writing are exactly what you would receive."

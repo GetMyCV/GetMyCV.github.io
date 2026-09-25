@@ -4,9 +4,15 @@ import CvDocument, { A4_HEIGHT, A4_WIDTH } from '@/components/CvDocument';
 import DemoBanner from '@/components/DemoBanner';
 import ScaledSheet from '@/components/ScaledSheet';
 import { cvPdfPath, cvs, getCv } from '@/content/cvs';
+import JsonLd, { Breadcrumbs } from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/metadata';
+import { site } from '@/content/site';
 
 type Params = { params: Promise<{ slug: string }> };
+
+/** "Classic — Senior accountant" → "Senior accountant". */
+const roleOf = (templateName: string) => templateName.split(' — ').pop() ?? templateName;
+const capitalise = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
 
 /** Static export needs every slug up front. */
 export function generateStaticParams() {
@@ -19,9 +25,15 @@ export async function generateMetadata({ params }: Params) {
   if (!cv) return {};
 
   return pageMetadata({
-    title: `${cv.templateName} CV template — sample`,
-    description: `A sample one-page, ATS-friendly CV GetMyCv writes for ${cv.profession.toLowerCase()} professionals, in the ${cv.layout} layout. Preview it or download the PDF.`,
+    title: `${roleOf(cv.templateName)} CV Template — ${capitalise(cv.layout)} Layout`,
+    description: `A one-page, ATS-friendly ${roleOf(cv.templateName).toLowerCase()} CV example in the ${cv.layout} layout, written around results. Preview it or download the PDF.`,
     path: `/cv/${cv.slug}/`,
+    image: {
+      url: `/samples/cv-${cv.slug}.jpg`,
+      width: 794,
+      height: 1123,
+      alt: `Sample ${roleOf(cv.templateName).toLowerCase()} CV in the ${cv.layout} layout`,
+    },
   });
 }
 
@@ -32,6 +44,30 @@ export default async function CvSamplePage({ params }: Params) {
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-navy-900 print:min-h-0 print:bg-white">
+      <Breadcrumbs
+        trail={[
+          { name: 'Samples', path: '/portfolio/' },
+          { name: `${roleOf(cv.templateName)} CV`, path: `/cv/${cv.slug}/` },
+        ]}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'DigitalDocument',
+          name: `${roleOf(cv.templateName)} CV template (${cv.layout} layout)`,
+          description: `Sample one-page ATS-friendly CV for ${cv.profession.toLowerCase()} professionals.`,
+          url: `${site.url}/cv/${cv.slug}/`,
+          image: `${site.url}/samples/cv-${cv.slug}.jpg`,
+          inLanguage: 'en',
+          isAccessibleForFree: true,
+          author: { '@id': `${site.url}/#business` },
+          encoding: {
+            '@type': 'MediaObject',
+            contentUrl: `${site.url}${cvPdfPath(cv.slug)}`,
+            encodingFormat: 'application/pdf',
+          },
+        }}
+      />
       <div className="print:hidden">
         <DemoBanner profession={cv.profession} kind="CV" />
       </div>
@@ -39,7 +75,7 @@ export default async function CvSamplePage({ params }: Params) {
       <div className="container-page flex flex-wrap items-end justify-between gap-4 pb-6 pt-8 print:hidden">
         <div>
           <p className="eyebrow">{cv.profession} · {cv.layout} layout</p>
-          <h1 className="mt-1 text-2xl sm:text-3xl">{cv.templateName}</h1>
+          <h1 className="mt-1 text-2xl sm:text-3xl">{roleOf(cv.templateName)} CV template</h1>
           <p className="mt-2 max-w-xl text-sm text-navy-700/80 dark:text-slate-300">
             One A4 page, written around outcomes and laid out so applicant tracking systems read it
             top to bottom. Yours is written from scratch around your own experience.

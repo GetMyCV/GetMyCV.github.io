@@ -1,4 +1,5 @@
 import Prose from '@/components/Prose';
+import { Breadcrumbs } from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/metadata';
 import { packages } from '@/content/pricing';
 import { site } from '@/content/site';
@@ -15,6 +16,7 @@ const updated = 'September 2026';
 export default function TermsPage() {
   return (
     <div className="container-page py-12 sm:py-16">
+      <Breadcrumbs trail={[{ name: 'Terms', path: '/terms/' }]} />
       <p className="eyebrow">Legal</p>
       <h1 className="mt-2 text-2xl sm:text-3xl">Terms, refunds and revisions</h1>
       <p className="mt-2 text-sm text-navy-700/70 dark:text-slate-400">Last updated {updated}</p>

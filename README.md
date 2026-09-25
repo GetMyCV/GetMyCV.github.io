@@ -269,6 +269,44 @@ payments that carry a Worker order's reference. The `stripe_session_id` and
 (`worker/migrations/0002_stripe_payments.sql`). The `total_lkr` column keeps
 its old name but now stores whole US dollars.
 
+## Search engines (Google)
+
+What the site already does, all generated at build time:
+
+| Piece | Where |
+| --- | --- |
+| `<meta name="google-site-verification">` | `site.googleSiteVerification` in `content/site.ts`, rendered by `app/layout.tsx` |
+| HTML verification file | `public/google6bd9d15b3ecc4bf4.html`, served at the site root |
+| `/sitemap.xml` with image entries for every sample | `app/sitemap.ts` |
+| `/robots.txt` pointing at the sitemap | `app/robots.ts` |
+| `/manifest.webmanifest` | `app/manifest.ts` |
+| Canonical URL, Open Graph and Twitter card per page | `pageMetadata()` in `lib/metadata.ts` |
+| Structured data: business + website graph, breadcrumbs, pricing offers, FAQ, CV documents | `app/layout.tsx`, `components/JsonLd.tsx`, individual pages |
+
+Every indexable page has one `<h1>`, a unique title of 30–65 characters and a
+description of 120–160 characters. The order-received page and the 404 page are
+`noindex`.
+
+### Search Console setup
+
+1. Add a **URL-prefix** property for `https://getmycv.github.io/`. A *Domain*
+   property (the one that asks for a DNS TXT or CNAME record) is not possible
+   here: `github.io` belongs to GitHub, so no one can add DNS records to it.
+   Do **not** put Google's CNAME value in a `CNAME` file in this repo; on GitHub
+   Pages that file sets the site's custom domain and would take the site down.
+2. Verify with **HTML tag** or **HTML file**; both are already deployed.
+3. Sitemaps → submit `sitemap.xml`.
+4. URL inspection → request indexing for `/`, `/services/`, `/pricing/` and
+   `/portfolio/` to speed up the first crawl.
+
+If the site later moves to a custom domain (e.g. `getmycv.lk`), that is when a
+Domain property and DNS verification become possible. Update `site.url` then,
+so canonicals, the sitemap and structured data follow.
+
+Testimonials are samples, so they deliberately carry no `Review` or
+`AggregateRating` markup; Google treats invented reviews as spam. Add it only
+once the quotes are real.
+
 ## Deployment
 
 Pushing to `main` triggers `.github/workflows/deploy.yml`, which typechecks, lints,

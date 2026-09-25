@@ -11,20 +11,33 @@ export const dynamic = 'force-static';
  * The success page is deliberately left out — it is noindex.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes: Array<{ path: string; priority: number; changeFrequency: 'monthly' | 'yearly' }> = [
+  const routes: Array<{
+    path: string;
+    priority: number;
+    changeFrequency: 'monthly' | 'yearly';
+    /** Image-sitemap entries, so sample previews can appear in Google Images. */
+    images?: string[];
+  }> = [
     { path: '/', priority: 1, changeFrequency: 'monthly' },
     { path: '/services/', priority: 0.9, changeFrequency: 'monthly' },
     { path: '/pricing/', priority: 0.9, changeFrequency: 'monthly' },
-    { path: '/portfolio/', priority: 0.8, changeFrequency: 'monthly' },
+    {
+      path: '/portfolio/',
+      priority: 0.8,
+      changeFrequency: 'monthly',
+      images: cvs.map((cv) => `${site.url}/samples/cv-${cv.slug}.jpg`),
+    },
     ...portfolios.map((p) => ({
       path: `/portfolio/${p.slug}/`,
       priority: 0.6,
       changeFrequency: 'monthly' as const,
+      images: [`${site.url}/samples/portfolio-${p.slug}.jpg`],
     })),
     ...cvs.map((cv) => ({
       path: `/cv/${cv.slug}/`,
-      priority: 0.6,
+      priority: 0.7,
       changeFrequency: 'monthly' as const,
+      images: [`${site.url}/samples/cv-${cv.slug}.jpg`],
     })),
     { path: '/order/', priority: 0.9, changeFrequency: 'monthly' },
     { path: '/privacy/', priority: 0.3, changeFrequency: 'yearly' },
@@ -38,5 +51,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
+    ...(route.images && { images: route.images }),
   }));
 }

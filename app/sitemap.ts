@@ -39,6 +39,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       images: [`${site.url}/samples/cv-${cv.slug}.jpg`],
     })),
+    { path: '/cv-builder/', priority: 0.9, changeFrequency: 'monthly' },
     { path: '/order/', priority: 0.9, changeFrequency: 'monthly' },
     { path: '/privacy/', priority: 0.3, changeFrequency: 'yearly' },
     { path: '/terms/', priority: 0.3, changeFrequency: 'yearly' },

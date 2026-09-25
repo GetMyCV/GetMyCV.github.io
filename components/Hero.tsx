@@ -44,7 +44,14 @@ export default function Hero() {
             </a>
           </div>
 
-          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-200">
+          <p className="mt-4 animate-fade-up text-sm text-slate-300 [animation-delay:300ms]">
+            Prefer to do it yourself?{' '}
+            <Link href="/cv-builder/" className="font-semibold text-teal underline-offset-4 hover:underline">
+              Try the free CV builder →
+            </Link>
+          </p>
+
+          <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-200">
             {trustPoints.map((point, index) => (
               <li
                 key={point}

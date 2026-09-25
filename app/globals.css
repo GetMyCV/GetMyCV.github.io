@@ -198,6 +198,28 @@
   }
 }
 
+/* CV sheets (components/CvDocument.tsx): fonts come from variables on the sheet. */
+[data-cv-sheet] :is(h2, h3),
+[data-cv-sheet] .cv-heading {
+  font-family: var(--cv-heading-font);
+}
+
+[data-cv-sheet] .cv-name {
+  font-family: var(--cv-name-font);
+}
+
+/* Entries and bullets never split across a page break. */
+[data-cv-sheet] .cv-block {
+  break-inside: avoid;
+}
+
+/* On multi-page CVs each column repeats its top and bottom padding on every
+   printed page, so page 2 does not start flush against the paper edge. */
+[data-cv-sheet]:not([data-pages='1']) .cv-column {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
 /*
  * CV sample pages print as exactly one A4 sheet: no margins, no on-screen
  * scaling, no shadow. The same rules produce the downloadable sample PDFs.
@@ -206,6 +228,11 @@
   @page {
     size: A4;
     margin: 0;
+  }
+
+  /* Exactly N sheets of paper, so rounding can never add a blank page. */
+  [data-cv-sheet] {
+    height: calc(var(--pages, 1) * 297mm) !important;
   }
 
   .sheet-scaler,

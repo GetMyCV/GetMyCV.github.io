@@ -4,7 +4,7 @@ import { site, whatsappLink } from '@/content/site';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-navy/10 bg-white dark:border-white/10 dark:bg-navy-900">
+    <footer className="border-t print:hidden border-navy/10 bg-white dark:border-white/10 dark:bg-navy-900">
       <div className="container-page grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div className="sm:col-span-2 lg:col-span-1">
           <Logo className="h-8" />
@@ -20,6 +20,7 @@ export default function Footer() {
             {[
               { href: '/services/', label: 'What you get' },
               { href: '/pricing/', label: 'Packages and prices' },
+              { href: '/cv-builder/', label: 'Free CV builder' },
               { href: '/portfolio/', label: 'Sample work' },
               { href: '/order/', label: 'Place an order' },
             ].map((l) => (

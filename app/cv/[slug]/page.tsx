@@ -88,6 +88,9 @@ export default async function CvSamplePage({ params }: Params) {
             </svg>
             Download PDF
           </a>
+          <Link href={`/cv-builder/?example=${cv.slug}`} className="btn-secondary">
+            Use this template
+          </Link>
           <Link href="/order/?package=starter" className="btn-primary">
             Get a CV like this
           </Link>
@@ -96,7 +99,12 @@ export default async function CvSamplePage({ params }: Params) {
 
       <div className="container-page pb-16 print:p-0">
         <ScaledSheet width={A4_WIDTH} height={A4_HEIGHT}>
-          <CvDocument cv={cv} />
+          <CvDocument
+            cv={cv}
+            layout={cv.layout}
+            accent={cv.accent}
+            footer="Sample CV by GetMyCv · The person shown is fictional"
+          />
         </ScaledSheet>
       </div>
     </div>

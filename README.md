@@ -102,6 +102,37 @@ Two things about how they render:
   banner and in the footer. Each has its own accent colour, all checked to meet
   WCAG AA on both white and their tinted backgrounds.
 
+## CV builder
+
+`/cv-builder/` is a free, self-serve CV builder. It runs entirely in the
+browser: nothing is uploaded, there is no account, and the CV autosaves to
+`localStorage` (`getmycv:cv-builder:v1`).
+
+| Piece | Where |
+| --- | --- |
+| Page, metadata, `WebApplication` schema | `app/cv-builder/page.tsx` |
+| Editor (8 steps), toolbar, print dialog, strength meter | `components/cv-builder/CvBuilder.tsx` |
+| Live A4 preview with page-break guides | `components/cv-builder/BuilderPreview.tsx` |
+| Template picker (live miniatures of the user's own CV) | `components/cv-builder/TemplatePicker.tsx` |
+| Templates and accent swatches | `content/cv-templates.ts` |
+| State, defaults, and `sanitize()` for storage and backups | `lib/cv-builder/model.ts` |
+| Word export (lazy-loaded `docx` library) | `lib/cv-builder/docx.ts` |
+| Photo crop and resize (360 px JPEG) | `lib/cv-builder/photo.ts` |
+| CV strength checks | `lib/cv-builder/strength.ts` |
+
+- **Templates:** Modern, Classic, Executive, Minimal and Elegant, all drawn by
+  `components/CvDocument.tsx`, the same component as the sample CVs. Photos show
+  on Modern, Executive and Elegant.
+- **Style:** 8 accent swatches plus a custom colour, three font choices, and a
+  text size of 80–110% with **Fit to one page**.
+- **Length:** long CVs flow onto page 2. Entries never split across a page
+  break, and sidebars run the full height of every page.
+- **PDF:** the browser's own Save as PDF, so the text stays real text for
+  applicant tracking systems. Site chrome is hidden in print.
+- **Word:** a single-column `.docx` with real headings and bullet lists, A4.
+- **Examples and backups:** start from any of the six sample CVs (sample pages
+  link to `/cv-builder/?example=<slug>`), or save and load a `.json` backup.
+
 ## Sample CVs
 
 Six one-page A4 CVs, one per profession, at `/cv/<slug>/`, in three layouts:

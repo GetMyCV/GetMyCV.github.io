@@ -1,11 +1,11 @@
 import type { Profession } from './samples';
 
 /**
- * The three CV layouts. All are single-column in reading order underneath, so
- * applicant tracking systems parse them top to bottom; the sidebar on `modern`
- * is visual only and comes after the main column in the markup.
+ * The CV layouts. All are single-column in reading order underneath, so
+ * applicant tracking systems parse them top to bottom; side columns are placed
+ * with CSS grid only, after the main column in the markup.
  */
-export type CvLayout = 'classic' | 'modern' | 'executive';
+export type CvLayout = 'classic' | 'modern' | 'executive' | 'minimal' | 'elegant';
 
 export type CvRole = {
   role: string;
@@ -15,19 +15,12 @@ export type CvRole = {
   points: string[];
 };
 
-export type DemoCv = {
-  slug: string;
-  profession: Profession;
-  layout: CvLayout;
-  /** Name shown on the sample card and the page title. */
-  templateName: string;
-  /** Fictional person. Every sample says so on the page and in the PDF footer. */
+/** What a CV says, independent of how it is laid out. The CV builder edits exactly this. */
+export type CvContent = {
   name: string;
   title: string;
   contact: { email: string; phone: string; location: string; linkedin: string };
   summary: string;
-  /** Accent colour. Checked for AA contrast on white at the sizes used. */
-  accent: string;
   experience: CvRole[];
   skills: { group: string; items: string[] }[];
   education: { qualification: string; institution: string; year: string; detail?: string }[];
@@ -36,6 +29,18 @@ export type DemoCv = {
   highlights?: { value: string; label: string }[];
   /** An optional extra section in the main column, e.g. selected projects. */
   extra?: { heading: string; items: { name: string; detail: string }[] };
+  /** Optional photo as a data: URL (builder only; the samples have none). */
+  photo?: string;
+};
+
+export type DemoCv = CvContent & {
+  slug: string;
+  profession: Profession;
+  layout: CvLayout;
+  /** Name shown on the sample card and the page title. */
+  templateName: string;
+  /** Accent colour. Checked for AA contrast on white at the sizes used. */
+  accent: string;
 };
 
 /**

@@ -11,7 +11,7 @@ import { isSampleDemo } from '@/lib/routes';
  */
 export default function StickyOrderBar() {
   const pathname = usePathname();
-  if (pathname?.startsWith('/order') || isSampleDemo(pathname)) return null;
+  if (pathname?.startsWith('/order') || pathname?.startsWith('/cv-builder') || isSampleDemo(pathname)) return null;
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-navy/10 bg-white/95 backdrop-blur dark:border-white/10 dark:bg-navy-900/95 md:hidden">

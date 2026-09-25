@@ -8,6 +8,7 @@ import Logo from './Logo';
 const navLinks = [
   { href: '/services/', label: 'Services' },
   { href: '/pricing/', label: 'Pricing' },
+  { href: '/cv-builder/', label: 'CV Builder' },
   { href: '/portfolio/', label: 'Portfolio' },
   { href: '/order/', label: 'Order' },
   { href: '/#faq', label: 'FAQ' },
@@ -32,7 +33,7 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 border-b border-navy/10 bg-surface-light/90 backdrop-blur transition-shadow duration-300 dark:border-white/10 dark:bg-surface-dark/90 ${
+      className={`sticky top-0 z-40 border-b print:hidden border-navy/10 bg-surface-light/90 backdrop-blur transition-shadow duration-300 dark:border-white/10 dark:bg-surface-dark/90 ${
         scrolled ? 'shadow-lg shadow-navy/5 dark:shadow-black/30' : ''
       }`}
     >

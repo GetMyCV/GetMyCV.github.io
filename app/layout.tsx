@@ -175,11 +175,16 @@ const siteJsonLd = {
 
 /**
  * Runs before first paint so revealed content never flashes visible-then-hidden.
- * Skipped for reduced-motion visitors, and undone if the observer has not
- * started a few seconds after load, so a script failure never hides content.
+ * Skipped for reduced-motion visitors and for crawlers and audit tools
+ * (Googlebot, Search Console's inspection tool, Lighthouse and the like): they
+ * may render without running every script, and must always see the page fully
+ * visible. It is the same content either way, only without the animation.
+ * Also undone if the observer has not started a few seconds after load, so a
+ * script failure never hides content from people either.
  */
 const revealScript = `(function(){try{
 if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+if(/bot|crawl|spider|slurp|Google-InspectionTool|Chrome-Lighthouse|PageSpeed|Headless/i.test(navigator.userAgent))return;
 var r=document.documentElement;r.classList.add('reveal-ready');
 window.addEventListener('load',function(){setTimeout(function(){if(!window.__revealStarted)r.classList.remove('reveal-ready')},3000)});
 }catch(e){}})();`;

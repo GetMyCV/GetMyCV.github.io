@@ -19,11 +19,12 @@ export const MAX_SCALE = 1.1;
 
 export const emptyRole = (): CvRole => ({ role: '', org: '', location: '', period: '', points: [''] });
 export const emptyEducation = () => ({ qualification: '', institution: '', year: '', detail: '' });
+export const emptyProject = () => ({ name: '', link: '', description: '', tech: '' });
 
 export const emptyContent = (): CvContent => ({
   name: '',
   title: '',
-  contact: { email: '', phone: '', location: '', linkedin: '' },
+  contact: { email: '', phone: '', location: '', linkedin: '', website: '' },
   summary: '',
   experience: [emptyRole()],
   skills: [{ group: '', items: [] }],
@@ -31,7 +32,8 @@ export const emptyContent = (): CvContent => ({
   certifications: [],
   languages: [],
   highlights: [],
-  extra: { heading: 'Projects', items: [] },
+  projects: [],
+  extra: { heading: 'Volunteering', items: [] },
 });
 
 export const blankState = (): BuilderState => ({
@@ -61,7 +63,8 @@ export const fromSample = (cv: DemoCv): BuilderState => ({
     certifications: cv.certifications ?? [],
     languages: cv.languages ?? [],
     highlights: cv.highlights ?? [],
-    extra: cv.extra ?? { heading: 'Projects', items: [] },
+    projects: cv.projects ?? [],
+    extra: cv.extra ?? { heading: 'Volunteering', items: [] },
   }),
 });
 
@@ -105,6 +108,7 @@ export function sanitize(raw: unknown): BuilderState | null {
         phone: str(contact.phone, 60),
         location: str(contact.location, 160),
         linkedin: str(contact.linkedin, 200),
+        website: str(contact.website, 200),
       },
       summary: str(c.summary, 1500),
       experience: arr(c.experience, 20).map((j) => {
@@ -136,8 +140,17 @@ export function sanitize(raw: unknown): BuilderState | null {
         const item = obj(h);
         return { value: str(item.value, 20), label: str(item.label, 60) };
       }),
+      projects: arr(c.projects, 12).map((p) => {
+        const project = obj(p);
+        return {
+          name: str(project.name, 120),
+          link: str(project.link, 300),
+          description: str(project.description, 240),
+          tech: str(project.tech, 120),
+        };
+      }),
       extra: {
-        heading: str(extra.heading, 60) || 'Projects',
+        heading: str(extra.heading, 60) || 'Volunteering',
         items: arr(extra.items, 12).map((i) => {
           const item = obj(i);
           return { name: str(item.name, 160), detail: str(item.detail, 400) };

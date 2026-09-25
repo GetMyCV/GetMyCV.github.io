@@ -7,7 +7,9 @@ import {
   TabStopPosition,
   TabStopType,
   TextRun,
+  ExternalHyperlink,
 } from 'docx';
+import { displayUrl, toMailto, toTel, toWebUrl } from '@/lib/links';
 import type { BuilderState } from './model';
 
 /**
@@ -59,10 +61,26 @@ export async function buildDocx(state: BuilderState): Promise<Blob> {
       }),
     );
   }
-  const contact = [cv.contact.location, cv.contact.phone, cv.contact.email, cv.contact.linkedin].filter(filled);
-  if (contact.length) {
+  // Contact line: plain text for the location, real hyperlinks for the rest,
+  // with the address itself as the visible text so an ATS can read it.
+  const link = (text: string, href: string | null, color = '475569', size = 19) =>
+    href
+      ? new ExternalHyperlink({ link: href, children: [new TextRun({ text, color, size, underline: {} })] })
+      : new TextRun({ text, color, size });
+  const contactRuns = [
+    filled(cv.contact.location) ? link(cv.contact.location.trim(), null) : null,
+    filled(cv.contact.phone) ? link(cv.contact.phone.trim(), toTel(cv.contact.phone)) : null,
+    filled(cv.contact.email) ? link(cv.contact.email.trim(), toMailto(cv.contact.email)) : null,
+    ...[cv.contact.linkedin, cv.contact.website ?? ''].map((u) =>
+      filled(u) ? link(toWebUrl(u) ? displayUrl(u) : u.trim(), toWebUrl(u)) : null,
+    ),
+  ].filter((r) => r !== null);
+  if (contactRuns.length) {
     children.push(
-      new Paragraph({ spacing: { after: 120 }, children: [new TextRun({ text: contact.join('  |  '), color: '475569', size: 19 })] }),
+      new Paragraph({
+        spacing: { after: 120 },
+        children: contactRuns.flatMap((run, i) => (i ? [new TextRun({ text: '  |  ', color: '94A3B8', size: 19 }), run] : [run])),
+      }),
     );
   }
 
@@ -96,6 +114,28 @@ export async function buildDocx(state: BuilderState): Promise<Blob> {
         children.push(new Paragraph({ spacing: { after: 40 }, children: [new TextRun({ text: where, color: accent, size: 20 })] }));
       }
       job.points.filter(filled).forEach((p) => bullet(p.trim()));
+    });
+  }
+
+  const projects = (cv.projects ?? []).filter((p) => filled(p.name) || filled(p.description) || filled(p.link));
+  if (projects.length) {
+    heading('Projects');
+    projects.forEach((project) => {
+      const href = toWebUrl(project.link);
+      children.push(
+        new Paragraph({
+          bullet: { level: 0 },
+          spacing: { after: 40 },
+          children: [
+            new TextRun({ text: project.name, bold: true }),
+            ...(filled(project.link)
+              ? [new TextRun('  '), link(href ? displayUrl(project.link) : project.link.trim(), href, accent, 19)]
+              : []),
+            ...(filled(project.description) ? [new TextRun(` — ${project.description.trim()}`)] : []),
+            ...(filled(project.tech) ? [new TextRun({ text: ` · ${project.tech.trim()}`, color: '64748B', size: 19 })] : []),
+          ],
+        }),
+      );
     });
   }
 

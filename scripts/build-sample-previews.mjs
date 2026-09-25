@@ -100,7 +100,8 @@ for (const scale of [1, 2]) {
   for (const slug of cvSlugs) {
     await page.goto(`${base}/cv/${slug}/`);
     await settle(page);
-    const sheet = page.locator('[data-cv-sheet]');
+    // .first(): the page also holds an off-screen copy used for the ATS panel.
+    const sheet = page.locator('[data-cv-sheet]').first();
 
     if (scale === 1) {
       // Any text below the footer line means the CV no longer fits one page.

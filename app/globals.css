@@ -251,3 +251,14 @@
     print-color-adjust: exact;
   }
 }
+
+/* Links on a CV look like the text around them, on screen and on paper. */
+:where([data-cv-sheet] .cv-link) {
+  color: inherit;
+  text-decoration: none;
+}
+
+[data-cv-sheet] a.cv-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

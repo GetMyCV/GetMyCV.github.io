@@ -21,6 +21,7 @@ export default function Footer() {
               { href: '/services/', label: 'What you get' },
               { href: '/pricing/', label: 'Packages and prices' },
               { href: '/cv-builder/', label: 'Free CV builder' },
+              { href: '/ats-checker/', label: 'Free ATS checker' },
               { href: '/portfolio/', label: 'Sample work' },
               { href: '/order/', label: 'Place an order' },
             ].map((l) => (

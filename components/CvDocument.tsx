@@ -1,4 +1,5 @@
 import type { CvContent, CvLayout } from '@/content/cvs';
+import { displayUrl, toMailto, toTel, toWebUrl, type CvLink } from '@/lib/links';
 
 /**
  * A CV on A4 (794 × 1123 CSS px, i.e. 210 × 297 mm at 96 dpi), rendered in one
@@ -28,6 +29,11 @@ export type CvDocumentProps = {
   pages?: number;
   /** Small print at the foot of the first page, e.g. on the samples. */
   footer?: string;
+  /**
+   * Render email, phone and web addresses as clickable links (they stay
+   * clickable in the printed PDF). Off for thumbnails that sit inside buttons.
+   */
+  links?: boolean;
 };
 
 const SERIF = 'Georgia, "Times New Roman", serif';
@@ -45,6 +51,7 @@ export default function CvDocument({
   scale = 1,
   pages = 1,
   footer,
+  links = true,
 }: CvDocumentProps) {
   const Layout = { classic: Classic, modern: Modern, executive: Executive, minimal: Minimal, elegant: Elegant }[
     layout
@@ -83,7 +90,7 @@ export default function CvDocument({
       {/* Measured by the CV builder to work out how many pages the CV needs. */}
       <div data-cv-content>
         <div style={scale === 1 ? undefined : { zoom: scale }}>
-          <Layout cv={cv} />
+          <Layout cv={cv} links={links} />
         </div>
       </div>
       {footer && (
@@ -104,7 +111,7 @@ export default function CvDocument({
 
 /* ------------------------------------------------------------------ shared */
 
-type LayoutProps = { cv: CvContent };
+type LayoutProps = { cv: CvContent; links: boolean };
 type HeadingComponent = (props: { children: React.ReactNode }) => React.ReactNode;
 
 const has = (value: string | undefined) => Boolean(value && value.trim());
@@ -116,10 +123,39 @@ const initialsOf = (name: string) =>
     .map((n) => n[0]?.toUpperCase())
     .join('') || 'CV';
 
-const contactItems = (cv: CvContent) =>
-  [cv.contact.location, cv.contact.phone, cv.contact.email, cv.contact.linkedin].filter(has);
+const contactItems = (cv: CvContent): CvLink[] => {
+  const { location, phone, email, linkedin, website } = cv.contact;
+  const items: CvLink[] = [];
+  if (has(location)) items.push({ text: location.trim(), href: null, kind: 'location' });
+  if (has(phone)) items.push({ text: phone.trim(), href: toTel(phone), kind: 'phone' });
+  if (has(email)) items.push({ text: email.trim(), href: toMailto(email), kind: 'email' });
+  for (const url of [linkedin, website]) {
+    if (!has(url)) continue;
+    const href = toWebUrl(url);
+    items.push({ text: href ? displayUrl(url!) : url!.trim(), href, kind: 'web' });
+  }
+  return items;
+};
 
-function Contact({ cv, className = '' }: { cv: CvContent; className?: string }) {
+/**
+ * A contact detail or web address. Links look exactly like the surrounding
+ * text on screen and paper, but are real links in the browser and the PDF.
+ */
+function LinkText({ item, links, className = '' }: { item: Pick<CvLink, 'text' | 'href' | 'kind'>; links: boolean; className?: string }) {
+  if (!links || !item.href) return <span className={className}>{item.text}</span>;
+  const external = item.kind === 'web';
+  return (
+    <a
+      href={item.href}
+      className={`cv-link ${className}`}
+      {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
+    >
+      {item.text}
+    </a>
+  );
+}
+
+function Contact({ cv, links, className = '' }: { cv: CvContent; links: boolean; className?: string }) {
   const items = contactItems(cv);
   if (!items.length) return null;
   return (
@@ -127,21 +163,21 @@ function Contact({ cv, className = '' }: { cv: CvContent; className?: string }) 
       {items.map((item, i) => (
         <span key={i} className="whitespace-nowrap">
           {i > 0 && <span aria-hidden="true" className="mr-2 opacity-50">·</span>}
-          {item}
+          <LinkText item={item} links={links} />
         </span>
       ))}
     </p>
   );
 }
 
-function ContactList({ cv, className = '' }: { cv: CvContent; className?: string }) {
+function ContactList({ cv, links, className = '' }: { cv: CvContent; links: boolean; className?: string }) {
   const items = contactItems(cv);
   if (!items.length) return null;
   return (
     <ul className={`space-y-1 leading-snug ${className}`}>
       {items.map((item, i) => (
         <li key={i} className="break-words">
-          {item}
+          <LinkText item={item} links={links} />
         </li>
       ))}
     </ul>
@@ -206,6 +242,56 @@ function Bullets({ points }: { points: string[] }) {
   );
 }
 
+const projectItems = (cv: CvContent) =>
+  (cv.projects ?? []).filter((p) => has(p.name) || has(p.description) || has(p.link));
+
+/**
+ * Projects, kept compact: name, link and one line each, with the tools in
+ * grey. The link shows as its readable address so an ATS can read it too.
+ */
+function ProjectList({ cv, links }: { cv: CvContent; links: boolean }) {
+  return (
+    <ul className="space-y-1.5">
+      {projectItems(cv).map((project, i) => {
+        const href = toWebUrl(project.link);
+        return (
+          <li key={i} className="cv-block leading-snug">
+            {has(project.name) && <span className="font-semibold text-slate-900">{project.name}</span>}
+            {has(project.link) && (
+              <LinkText
+                item={{ text: href ? displayUrl(project.link) : project.link.trim(), href, kind: 'web' }}
+                links={links}
+                className="ml-1.5 text-[11.5px] font-medium [color:var(--accent)]"
+              />
+            )}
+            {has(project.description) && (
+              <>
+                {(has(project.name) || has(project.link)) && (
+                  <span aria-hidden="true" className="mx-1.5 text-slate-400">
+                    —
+                  </span>
+                )}
+                {project.description}
+              </>
+            )}
+            {has(project.tech) && <span className="text-[11.5px] text-slate-500"> · {project.tech}</span>}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function Projects({ cv, links, Heading }: { cv: CvContent; links: boolean; Heading: HeadingComponent }) {
+  if (!projectItems(cv).length) return null;
+  return (
+    <>
+      <Heading>Projects</Heading>
+      <ProjectList cv={cv} links={links} />
+    </>
+  );
+}
+
 const extraItems = (cv: CvContent) => (cv.extra?.items ?? []).filter((i) => has(i.name) || has(i.detail));
 
 /** The optional extra section, e.g. selected projects, in each layout's own heading style. */
@@ -266,27 +352,28 @@ const langs = (cv: CvContent) => (cv.languages ?? []).filter(has);
 function Highlights({ cv, onDark = false }: { cv: CvContent; onDark?: boolean }) {
   const items = highlightItems(cv);
   if (!items.length) return null;
+  // Plain blocks, number first: they read as "3.82 GPA, First Class" in the
+  // text layer an ATS extracts, with no hidden duplicate labels.
   return (
-    <dl className={`grid gap-3 ${items.length === 1 ? 'grid-cols-1' : items.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+    <div className={`grid gap-3 ${items.length === 1 ? 'grid-cols-1' : items.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
       {items.map((h, i) => (
         <div
           key={i}
           className={`rounded-lg px-3 py-2 ${onDark ? 'bg-white/10' : ''}`}
           style={onDark ? undefined : { backgroundColor: 'var(--accent-soft)' }}
         >
-          <dt className="sr-only">{h.label}</dt>
-          <dd
+          <p
             className="text-[20px] font-extrabold leading-tight"
             style={{ color: onDark ? '#fff' : 'var(--accent)' }}
           >
             {h.value}
-          </dd>
-          <dd className={`text-[11px] leading-snug ${onDark ? 'text-white/80' : 'text-slate-600'}`}>
+          </p>
+          <p className={`text-[11px] leading-snug ${onDark ? 'text-white/80' : 'text-slate-600'}`}>
             {h.label}
-          </dd>
+          </p>
         </div>
       ))}
-    </dl>
+    </div>
   );
 }
 
@@ -305,7 +392,7 @@ function ClassicHeading({ children }: { children: React.ReactNode }) {
 }
 
 /** Centred serif name, ruled section headings, one column. The safest ATS layout. */
-function Classic({ cv }: LayoutProps) {
+function Classic({ cv, links }: LayoutProps) {
   const hasCerts = certs(cv).length > 0;
   const hasLangs = langs(cv).length > 0;
   return (
@@ -320,7 +407,7 @@ function Classic({ cv }: LayoutProps) {
             {cv.title}
           </p>
         )}
-        <Contact cv={cv} className="mt-2 justify-center text-[12px] text-slate-500" />
+        <Contact cv={cv} links={links} className="mt-2 justify-center text-[12px] text-slate-500" />
         <div aria-hidden="true" className="mx-auto mt-4 h-[2px] w-16" style={{ backgroundColor: 'var(--accent)' }} />
       </header>
 
@@ -344,7 +431,9 @@ function Classic({ cv }: LayoutProps) {
         </>
       )}
 
-      <Extra cv={cv} Heading={ClassicHeading} />
+      <Projects cv={cv} links={links} Heading={ClassicHeading} />
+
+        <Extra cv={cv} Heading={ClassicHeading} />
 
       {skillGroups(cv).length > 0 && (
         <>
@@ -413,7 +502,7 @@ const ModernMainHeading: HeadingComponent = ({ children }) => <ModernHeading>{ch
  * Tinted sidebar on the left for contact, skills and education; the story on
  * the right. The main column comes first in the markup so parsers read it first.
  */
-function Modern({ cv }: LayoutProps) {
+function Modern({ cv, links }: LayoutProps) {
   return (
     <div className="grid grid-cols-[236px_1fr]">
       <main className="cv-column col-start-2 row-start-1 px-10 pb-10 pt-12">
@@ -441,6 +530,8 @@ function Modern({ cv }: LayoutProps) {
           </>
         )}
 
+        <Projects cv={cv} links={links} Heading={ModernMainHeading} />
+
         <Extra cv={cv} Heading={ModernMainHeading} />
       </main>
 
@@ -462,7 +553,7 @@ function Modern({ cv }: LayoutProps) {
         {contactItems(cv).length > 0 && (
           <section>
             <ModernHeading light>Contact</ModernHeading>
-            <ContactList cv={cv} className="text-[12px]" />
+            <ContactList cv={cv} links={links} className="text-[12px]" />
           </section>
         )}
 
@@ -535,7 +626,7 @@ function ExecHeading({ children }: { children: React.ReactNode }) {
 }
 
 /** Solid accent band with the headline numbers, then a wide main column. */
-function Executive({ cv }: LayoutProps) {
+function Executive({ cv, links }: LayoutProps) {
   const side = skillGroups(cv).length + schools(cv).length + certs(cv).length + langs(cv).length > 0;
   return (
     <div>
@@ -544,7 +635,7 @@ function Executive({ cv }: LayoutProps) {
           <div className="min-w-0 flex-1">
             <h2 className="cv-name text-[34px] font-extrabold leading-none tracking-tight text-white">{cv.name}</h2>
             {has(cv.title) && <p className="mt-2 text-[14px] font-semibold text-white/90">{cv.title}</p>}
-            <Contact cv={cv} className="mt-2 text-[12px] text-white/85" />
+            <Contact cv={cv} links={links} className="mt-2 text-[12px] text-white/85" />
           </div>
           <Photo cv={cv} className="h-[92px] w-[92px] shrink-0 rounded-full ring-4 ring-white/25" />
         </div>
@@ -571,7 +662,9 @@ function Executive({ cv }: LayoutProps) {
             </>
           )}
 
-          <Extra cv={cv} Heading={ExecHeading} />
+          <Projects cv={cv} links={links} Heading={ExecHeading} />
+
+        <Extra cv={cv} Heading={ExecHeading} />
         </main>
 
         {side && (
@@ -648,13 +741,13 @@ function MinimalRow({ label, children }: { label: string; children: React.ReactN
 }
 
 /** Quiet, precise, lots of white space: section labels in a left margin. */
-function Minimal({ cv }: LayoutProps) {
+function Minimal({ cv, links }: LayoutProps) {
   return (
     <div className="cv-column px-[60px] pb-10 pt-14">
       <header className="pb-6">
         <h2 className="cv-name text-[38px] font-bold leading-none tracking-tight text-slate-900">{cv.name}</h2>
         {has(cv.title) && <p className="mt-2.5 text-[15px] text-slate-600">{cv.title}</p>}
-        <Contact cv={cv} className="mt-3 text-[12px] text-slate-500" />
+        <Contact cv={cv} links={links} className="mt-3 text-[12px] text-slate-500" />
       </header>
 
       {has(cv.summary) && (
@@ -671,6 +764,12 @@ function Minimal({ cv }: LayoutProps) {
       {jobs(cv).length > 0 && (
         <MinimalRow label="Experience">
           <Experience cv={cv} />
+        </MinimalRow>
+      )}
+
+      {projectItems(cv).length > 0 && (
+        <MinimalRow label="Projects">
+          <ProjectList cv={cv} links={links} />
         </MinimalRow>
       )}
 
@@ -743,7 +842,7 @@ function ElegantHeading({ children }: { children: React.ReactNode }) {
 }
 
 /** Dark accent sidebar with the photo and contact details; the story on the right. */
-function Elegant({ cv }: LayoutProps) {
+function Elegant({ cv, links }: LayoutProps) {
   return (
     <div className="grid grid-cols-[250px_1fr]">
       <main className="cv-column col-start-2 row-start-1 px-10 pb-10 pt-12">
@@ -779,6 +878,8 @@ function Elegant({ cv }: LayoutProps) {
           </>
         )}
 
+        <Projects cv={cv} links={links} Heading={ElegantHeading} />
+
         <Extra cv={cv} Heading={ElegantHeading} />
 
         {schools(cv).length > 0 && (
@@ -806,7 +907,7 @@ function Elegant({ cv }: LayoutProps) {
         {contactItems(cv).length > 0 && (
           <section>
             <ElegantSideHeading>Contact</ElegantSideHeading>
-            <ContactList cv={cv} />
+            <ContactList cv={cv} links={links} />
           </section>
         )}
 

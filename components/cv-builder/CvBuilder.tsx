@@ -13,6 +13,7 @@ import {
   STORAGE_KEY,
   blankState,
   emptyEducation,
+  emptyProject,
   emptyRole,
   fileNameFor,
   fromSample,
@@ -23,17 +24,24 @@ import {
 } from '@/lib/cv-builder/model';
 import { photoToDataUrl } from '@/lib/cv-builder/photo';
 import { strengthChecks } from '@/lib/cv-builder/strength';
+import AtsReportView from '@/components/ats/AtsReportView';
+import CvPlainText from '@/components/ats/CvPlainText';
+import { toWebUrl } from '@/lib/links';
 import BuilderPreview from './BuilderPreview';
 import TemplatePicker from './TemplatePicker';
 import { AddButton, ItemControls, ListText, StepCard, TextArea, TextField, move } from './fields';
 
-type Step = 'design' | 'personal' | 'profile' | 'experience' | 'education' | 'skills' | 'more' | 'finish';
+type Step = 'design' | 'personal' | 'profile' | 'experience' | 'projects' | 'education' | 'skills' | 'more' | 'finish';
 
 const fonts: { id: CvFont; label: string; sample: string }[] = [
   { id: 'template', label: 'Template default', sample: 'font-heading' },
   { id: 'sans', label: 'Clean sans', sample: 'font-sans' },
   { id: 'serif', label: 'Classic serif', sample: 'font-serif' },
 ];
+
+/** A gentle warning when something typed into a link field is not a web address. */
+const linkHint = (value: string | undefined) =>
+  value && value.trim() && !toWebUrl(value) ? 'This does not look like a web address, so it will not be clickable.' : undefined;
 
 const download = (blob: Blob, name: string) => {
   const url = URL.createObjectURL(blob);
@@ -73,6 +81,7 @@ export default function CvBuilder() {
   const pages = Math.max(1, Math.ceil((contentHeight - 40 * state.scale - 2) / A4_HEIGHT));
   // The preview and thumbnails lag a keystroke behind, so typing stays instant.
   const deferred = useDeferredValue(state);
+  const [atsText, setAtsText] = useState('');
   const thumbContent = useMemo(() => withPlaceholders(deferred.content), [deferred.content]);
 
   /* ---------------------------------------------------------- persistence */
@@ -299,6 +308,9 @@ export default function CvBuilder() {
           </span>
 
           <span className="ml-auto flex items-center gap-2">
+            <button type="button" onClick={() => { setTab('edit'); next('finish'); }} className="btn-ghost px-3 py-2 text-sm">
+              ATS check
+            </button>
             <button type="button" onClick={downloadWord} disabled={busy === 'docx'} className="btn-secondary px-3 py-2 text-sm sm:px-4">
               {busy === 'docx' ? 'Preparing…' : 'Word'}
             </button>
@@ -428,7 +440,8 @@ export default function CvBuilder() {
                 <TextField label="Email" type="email" value={c.contact.email} onChange={(v) => edit((x) => ({ ...x, contact: { ...x.contact, email: v } }))} autoComplete="email" placeholder="you@example.com" />
                 <TextField label="Phone" type="tel" value={c.contact.phone} onChange={(v) => edit((x) => ({ ...x, contact: { ...x.contact, phone: v } }))} autoComplete="tel" placeholder="+94 77 123 4567" />
                 <TextField label="Location" value={c.contact.location} onChange={(v) => edit((x) => ({ ...x, contact: { ...x.contact, location: v } }))} placeholder="Colombo, Sri Lanka" />
-                <TextField label="LinkedIn or website" value={c.contact.linkedin} onChange={(v) => edit((x) => ({ ...x, contact: { ...x.contact, linkedin: v } }))} placeholder="linkedin.com/in/yourname" />
+                <TextField label="LinkedIn" value={c.contact.linkedin} onChange={(v) => edit((x) => ({ ...x, contact: { ...x.contact, linkedin: v } }))} placeholder="linkedin.com/in/yourname" inputMode="url" hint={linkHint(c.contact.linkedin)} />
+                <TextField className="sm:col-span-2" label="Portfolio, GitHub or website (optional)" value={c.contact.website ?? ''} onChange={(v) => edit((x) => ({ ...x, contact: { ...x.contact, website: v } }))} placeholder="github.com/yourname" inputMode="url" hint={linkHint(c.contact.website) ?? 'Shown as a clickable link on your CV.'} />
               </div>
 
               <div className="mt-5 flex flex-wrap items-center gap-4 rounded-xl border border-navy/10 p-4 dark:border-white/10">
@@ -538,12 +551,51 @@ export default function CvBuilder() {
                 })}
                 <AddButton onClick={() => edit((x) => ({ ...x, experience: [...x.experience, emptyRole()] }))}>Add a role</AddButton>
               </div>
+              {nextButton('projects', 'Projects')}
+            </StepCard>
+          </div>
+
+          <div id="step-projects" className="scroll-mt-40">
+            <StepCard step={5} title="Projects" hint={`${(c.projects ?? []).filter((x) => x.name).length} project(s) · optional`} open={open === 'projects'} onToggle={() => toggle('projects')} done={(c.projects ?? []).some((x) => x.name && x.description)}>
+              <p className="-mt-1 mb-4 text-sm text-navy-700/80 dark:text-slate-300">
+                Side projects, university work or portfolio pieces. Each shows as one compact line, with its link clickable in the PDF.
+              </p>
+              <div className="space-y-3">
+                {(c.projects ?? []).map((project, i) => {
+                  const update = (patch: Partial<typeof project>) =>
+                    edit((x) => ({ ...x, projects: (x.projects ?? []).map((pr, k) => (k === i ? { ...pr, ...patch } : pr)) }));
+                  return (
+                    <fieldset key={i} className="rounded-xl border border-navy/10 p-3 dark:border-white/10">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <legend className="text-sm font-bold text-navy dark:text-white">{project.name || `Project ${i + 1}`}</legend>
+                        <ItemControls
+                          index={i}
+                          count={c.projects?.length ?? 0}
+                          noun="project"
+                          onMove={(from, to) => edit((x) => ({ ...x, projects: move(x.projects ?? [], from, to) }))}
+                          onRemove={(k) => edit((x) => ({ ...x, projects: (x.projects ?? []).filter((_, n) => n !== k) }))}
+                        />
+                      </div>
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <input aria-label={`Project ${i + 1} name`} className="input py-2" placeholder="Name, e.g. Campus timetable app" value={project.name} maxLength={120} onChange={(e) => update({ name: e.target.value })} />
+                        <div>
+                          <input aria-label={`Project ${i + 1} link (optional)`} className="input py-2" placeholder="Link (optional), e.g. github.com/you/app" inputMode="url" value={project.link} maxLength={300} onChange={(e) => update({ link: e.target.value })} />
+                          {linkHint(project.link) && <p className="mt-1 text-xs text-amber-700 dark:text-amber">{linkHint(project.link)}</p>}
+                        </div>
+                        <input aria-label={`Project ${i + 1} description`} className="input py-2 sm:col-span-2" placeholder="One line: what it does and the result, e.g. Used by 400+ students" value={project.description} maxLength={240} onChange={(e) => update({ description: e.target.value })} />
+                        <input aria-label={`Project ${i + 1} tools (optional)`} className="input py-2 sm:col-span-2" placeholder="Tools (optional), e.g. React, Firebase" value={project.tech} maxLength={120} onChange={(e) => update({ tech: e.target.value })} />
+                      </div>
+                    </fieldset>
+                  );
+                })}
+                <AddButton onClick={() => edit((x) => ({ ...x, projects: [...(x.projects ?? []), emptyProject()] }))}>Add a project</AddButton>
+              </div>
               {nextButton('education', 'Education')}
             </StepCard>
           </div>
 
           <div id="step-education" className="scroll-mt-40">
-            <StepCard step={5} title="Education" hint={c.education.find((e) => e.qualification)?.qualification || 'Degrees, diplomas, A/Ls'} open={open === 'education'} onToggle={() => toggle('education')} done={c.education.some((e) => e.qualification)}>
+            <StepCard step={6} title="Education" hint={c.education.find((e) => e.qualification)?.qualification || 'Degrees, diplomas, A/Ls'} open={open === 'education'} onToggle={() => toggle('education')} done={c.education.some((e) => e.qualification)}>
               <div className="space-y-4">
                 {c.education.map((ed, i) => {
                   const update = (patch: Partial<typeof ed>) =>
@@ -576,7 +628,7 @@ export default function CvBuilder() {
           </div>
 
           <div id="step-skills" className="scroll-mt-40">
-            <StepCard step={6} title="Skills" hint={`${c.skills.flatMap((s) => s.items).length} skill(s)`} open={open === 'skills'} onToggle={() => toggle('skills')} done={c.skills.flatMap((s) => s.items).length >= 6}>
+            <StepCard step={7} title="Skills" hint={`${c.skills.flatMap((s) => s.items).length} skill(s)`} open={open === 'skills'} onToggle={() => toggle('skills')} done={c.skills.flatMap((s) => s.items).length >= 6}>
               <p className="-mt-1 mb-4 text-sm text-navy-700/80 dark:text-slate-300">
                 Group them (e.g. Tools, Languages, Leadership). Use the words from the job advert so ATS filters match.
               </p>
@@ -612,12 +664,12 @@ export default function CvBuilder() {
           </div>
 
           <div id="step-more" className="scroll-mt-40">
-            <StepCard step={7} title="More sections" hint="Projects, certifications, languages" open={open === 'more'} onToggle={() => toggle('more')} done={(c.certifications?.length ?? 0) + (c.languages?.length ?? 0) > 0}>
+            <StepCard step={8} title="More sections" hint="Certifications, languages, volunteering, awards" open={open === 'more'} onToggle={() => toggle('more')} done={(c.certifications?.length ?? 0) + (c.languages?.length ?? 0) > 0}>
               <TextField
                 label="Custom section title"
                 value={c.extra?.heading ?? ''}
                 onChange={(v) => edit((x) => ({ ...x, extra: { heading: v, items: x.extra?.items ?? [] } }))}
-                placeholder="Projects, Volunteering, Awards…"
+                placeholder="Volunteering, Awards, Publications…"
               />
               <div className="mt-3 space-y-3">
                 {(c.extra?.items ?? []).map((item, i) => {
@@ -627,7 +679,7 @@ export default function CvBuilder() {
                     <div key={i} className="rounded-xl border border-navy/10 p-3 dark:border-white/10">
                       <div className="flex items-start gap-2">
                         <div className="grid flex-1 gap-2">
-                          <input aria-label={`Item ${i + 1} name`} className="input py-2" placeholder="Name, e.g. Inventory app" value={item.name} onChange={(e) => update({ name: e.target.value })} />
+                          <input aria-label={`Item ${i + 1} name`} className="input py-2" placeholder="Name, e.g. Red Cross volunteer" value={item.name} onChange={(e) => update({ name: e.target.value })} />
                           <input aria-label={`Item ${i + 1} detail`} className="input py-2" placeholder="One line on what it was and the result" value={item.detail} onChange={(e) => update({ detail: e.target.value })} />
                         </div>
                         <ItemControls
@@ -655,8 +707,20 @@ export default function CvBuilder() {
           </div>
 
           <div id="step-finish" className="scroll-mt-40">
-            <StepCard step={8} title="Check & download" hint={`CV strength ${score}%`} open={open === 'finish'} onToggle={() => toggle('finish')} done={score === 100}>
-              <Strength score={score} checks={checks} />
+            <StepCard step={9} title="ATS check & download" hint={`See what an ATS reads · writing score ${score}%`} open={open === 'finish'} onToggle={() => toggle('finish')} done={score === 100}>
+              <p className="-mt-1 mb-4 text-sm text-navy-700/80 dark:text-slate-300">
+                Most employers screen CVs with an applicant tracking system (ATS) before a person reads them. This is what one extracts from your CV, and how to make it score higher.
+              </p>
+              <AtsReportView text={atsText} content={deferred.content} pages={pages} />
+              <details className="group mt-5 rounded-xl border border-navy/10 dark:border-white/10">
+                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-navy dark:text-white [&::-webkit-details-marker]:hidden">
+                  <span>Writing checklist <span className="ml-1 font-normal text-navy-700/60 dark:text-slate-400">{score}%</span></span>
+                  <span aria-hidden="true" className="transition-transform group-open:rotate-180">▾</span>
+                </summary>
+                <div className="border-t border-navy/10 p-4 dark:border-white/10">
+                  <Strength score={score} checks={checks} />
+                </div>
+              </details>
               <div className="mt-5 flex flex-wrap gap-3">
                 <button type="button" className="btn-primary" onClick={() => printDialog.current?.showModal()}>
                   Download PDF
@@ -709,6 +773,17 @@ export default function CvBuilder() {
       </div>
 
       <PrintDialog dialogRef={printDialog} onPrint={printPdf} pages={pages} />
+
+      {open === 'finish' && (
+        <CvPlainText
+          cv={withPlaceholders(deferred.content)}
+          layout={deferred.layout}
+          accent={deferred.accent}
+          font={deferred.font}
+          scale={deferred.scale}
+          onText={setAtsText}
+        />
+      )}
     </div>
   );
 }

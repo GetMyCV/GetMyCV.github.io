@@ -3,19 +3,22 @@ import ServiceCard from '@/components/ServiceCard';
 import Steps from '@/components/Steps';
 import CallToAction from '@/components/CallToAction';
 import { services } from '@/content/services';
+import { Breadcrumbs } from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/metadata';
 
 export const metadata = pageMetadata({
-  title: 'Services',
+  title: 'CV Writing, Cover Letter & LinkedIn Services',
   description:
-    'CV writing, ATS-friendly formatting, cover letters, LinkedIn profile makeovers and personal portfolio websites — what each one includes and what you receive.',
+    'Professional CV writing, ATS-friendly formatting, cover letters, LinkedIn makeovers and portfolio websites for Sri Lankan job seekers, and what you receive.',
   path: '/services/',
 });
 
 export default function ServicesPage() {
   return (
     <>
+      <Breadcrumbs trail={[{ name: 'Services', path: '/services/' }]} />
       <Section
+        headingLevel="h1"
         eyebrow="Services"
         title="What you actually get"
         intro="Every package is built from these five pieces. Nothing is a template swap — each one starts from your own experience and the roles you are targeting."

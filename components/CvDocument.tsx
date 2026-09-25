@@ -167,9 +167,9 @@ function Classic({ cv }: { cv: DemoCv }) {
   return (
     <div className="px-[60px] pb-10 pt-12">
       <header className="text-center">
-        <h1 className="text-[36px] font-normal leading-tight tracking-tight text-slate-900" style={serif}>
+        <h2 className="text-[36px] font-normal leading-tight tracking-tight text-slate-900" style={serif}>
           {cv.name}
-        </h1>
+        </h2>
         <p
           className="mt-1 text-[12px] font-semibold uppercase tracking-[0.2em]"
           style={{ color: 'var(--accent)' }}
@@ -248,9 +248,9 @@ function Modern({ cv }: { cv: DemoCv }) {
     <div className="grid h-full grid-cols-[236px_1fr]">
       <main className="col-start-2 row-start-1 px-10 pb-10 pt-12">
         <header>
-          <h1 className="font-heading text-[34px] font-extrabold leading-none tracking-tight text-slate-900">
+          <h2 className="font-heading text-[34px] font-extrabold leading-none tracking-tight text-slate-900">
             {cv.name}
-          </h1>
+          </h2>
           <p className="mt-2 text-[14px] font-semibold" style={{ color: 'var(--accent)' }}>
             {cv.title}
           </p>
@@ -362,7 +362,7 @@ function Executive({ cv }: { cv: DemoCv }) {
   return (
     <div>
       <header className="px-[52px] pb-6 pt-10 text-white" style={{ backgroundColor: 'var(--accent)' }}>
-        <h1 className="font-heading text-[34px] font-extrabold leading-none tracking-tight text-white">{cv.name}</h1>
+        <h2 className="font-heading text-[34px] font-extrabold leading-none tracking-tight text-white">{cv.name}</h2>
         <p className="mt-2 text-[14px] font-semibold text-white/90">{cv.title}</p>
         <Contact cv={cv} className="mt-2 text-[12px] text-white/85" />
         <div className="mt-5">

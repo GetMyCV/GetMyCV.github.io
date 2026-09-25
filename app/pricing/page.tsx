@@ -4,12 +4,15 @@ import PricingCard from '@/components/PricingCard';
 import Faq from '@/components/Faq';
 import CallToAction from '@/components/CallToAction';
 import { addOns, formatPrice, packages } from '@/content/pricing';
+import JsonLd, { Breadcrumbs } from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/metadata';
+import { site } from '@/content/site';
 
 export const metadata = pageMetadata({
-  title: 'Pricing',
-  description:
-    'Three CV and portfolio packages in US dollars with turnaround times, what each includes, and add-ons such as express 48-hour delivery and custom domain setup.',
+  title: 'CV Writing Prices & Packages',
+  description: `CV writing from ${formatPrice(packages[0].price)}, CV plus cover letter and LinkedIn for ${formatPrice(
+    packages[1].price,
+  )}, or a full portfolio website for ${formatPrice(packages[2].price)}. Clear turnaround times and revisions included.`,
   path: '/pricing/',
 });
 
@@ -23,11 +26,15 @@ const offersJsonLd = {
       '@type': 'Service',
       name: `${pkg.name} package`,
       description: pkg.summary,
+      serviceType: 'CV writing',
+      provider: { '@id': `${site.url}/#business` },
+      areaServed: { '@type': 'Country', name: site.areaServed },
       offers: {
         '@type': 'Offer',
         price: pkg.price ?? undefined,
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
+        url: `${site.url}/order/?package=${pkg.id}`,
       },
     },
   })),
@@ -36,7 +43,9 @@ const offersJsonLd = {
 export default function PricingPage() {
   return (
     <>
+      <Breadcrumbs trail={[{ name: 'Pricing', path: '/pricing/' }]} />
       <Section
+        headingLevel="h1"
         eyebrow="Pricing"
         title="Pick the package that matches the job you want"
         intro="Prices are in US dollars and include everything listed — revisions, editable files and delivery."
@@ -119,10 +128,7 @@ export default function PricingPage() {
 
       <CallToAction title="Know which package you want?" />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(offersJsonLd) }}
-      />
+      <JsonLd data={offersJsonLd} />
     </>
   );
 }

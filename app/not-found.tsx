@@ -3,6 +3,8 @@ import Link from 'next/link';
 export const metadata = {
   title: 'Page not found',
   robots: { index: false, follow: false },
+  // Do not inherit the home page's canonical URL.
+  alternates: { canonical: null },
 };
 
 export default function NotFound() {

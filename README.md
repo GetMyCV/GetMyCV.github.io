@@ -133,6 +133,50 @@ browser: nothing is uploaded, there is no account, and the CV autosaves to
 - **Examples and backups:** start from any of the six sample CVs (sample pages
   link to `/cv-builder/?example=<slug>`), or save and load a `.json` backup.
 
+## ATS checker
+
+Shows people what an applicant tracking system (ATS) extracts from a CV and
+how ATS-friendly it is. One engine (`lib/ats.ts`), one report UI
+(`components/ats/AtsReportView.tsx`), used in three places:
+
+| Where | Text source |
+| --- | --- |
+| CV builder, step 9 "ATS check & download" (toolbar button **ATS check**) | The user's CV, rendered off-screen and read in DOM order (`components/ats/CvPlainText.tsx`), which is the order of the PDF's text layer |
+| Every sample CV page, under the sheet (`components/ats/SampleAtsPanel.tsx`) | The sample, the same way |
+| `/ats-checker/` (`components/ats/AtsTextChecker.tsx`) | Text pasted from any existing CV |
+
+The report covers:
+
+- **Score and verdict.** A weighted share of the checks passed: ATS-friendly,
+  mostly, or needs work.
+- **What an ATS identifies.** Name, email, phone, location, links, job title,
+  skills and education; each role with its dates as parsed; which standard
+  sections were found.
+- **Checks, each with a fix.** Contact details are parseable, standard
+  headings, recognised custom heading, dates in a parseable format, most recent
+  role first, short bullets, no emoji or icon fonts, reading order (or, for
+  pasted text, whether the text came out cleanly), links written out in full,
+  length, photo and file format notes.
+- **Job-ad keyword match** (optional). Keywords are extracted from the ad:
+  named skills and tools (capitalised terms and acronyms), repeated words, and
+  two-word phrases that never cross punctuation. The report shows the
+  percentage matched and matched and missing chips.
+- **The raw plain text**, with a copy button.
+
+Everything runs in the browser; nothing is sent anywhere.
+
+## Links and projects on CVs
+
+- **Clickable links.** Email becomes `mailto:`, phone `tel:`, and LinkedIn,
+  portfolio/website and project links become `https:` (`lib/links.ts`).
+  Anything else, such as `javascript:`, is shown as plain text and never linked.
+  The visible text is always the readable address, because an ATS reads the
+  words, not hidden hyperlinks. Links stay clickable in the printed PDF and in
+  the Word download, and the sample PDFs include them.
+- **Projects.** A compact section in every template: name, optional link, one
+  line of description and optional tools. It has its own builder step (5) and
+  appears in the Word file.
+
 ## Sample CVs
 
 Six one-page A4 CVs, one per profession, at `/cv/<slug>/`, in three layouts:

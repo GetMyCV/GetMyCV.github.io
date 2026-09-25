@@ -15,11 +15,29 @@ export type CvRole = {
   points: string[];
 };
 
+export type CvProject = {
+  name: string;
+  /** Optional URL (GitHub, live demo, case study). Shown as text and clickable. */
+  link: string;
+  /** One line on what it is and the result. */
+  description: string;
+  /** Optional tools or technologies, e.g. "React, Firebase". */
+  tech: string;
+};
+
 /** What a CV says, independent of how it is laid out. The CV builder edits exactly this. */
 export type CvContent = {
   name: string;
   title: string;
-  contact: { email: string; phone: string; location: string; linkedin: string };
+  contact: {
+    email: string;
+    phone: string;
+    location: string;
+    /** LinkedIn profile, or any main link. */
+    linkedin: string;
+    /** Optional second link: portfolio, GitHub, personal site. */
+    website?: string;
+  };
   summary: string;
   experience: CvRole[];
   skills: { group: string; items: string[] }[];
@@ -27,7 +45,9 @@ export type CvContent = {
   certifications?: string[];
   languages?: string[];
   highlights?: { value: string; label: string }[];
-  /** An optional extra section in the main column, e.g. selected projects. */
+  /** Compact projects, each one or two lines, with an optional link. */
+  projects?: CvProject[];
+  /** An optional extra section in the main column, e.g. awards or volunteering. */
   extra?: { heading: string; items: { name: string; detail: string }[] };
   /** Optional photo as a data: URL (builder only; the samples have none). */
   photo?: string;

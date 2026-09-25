@@ -40,7 +40,7 @@ export default function CvBuilderPage() {
         <p className="eyebrow">Free CV builder</p>
         <h1 className="mt-2 text-2xl sm:text-3xl lg:text-4xl">Build a professional CV in minutes</h1>
         <p className="mt-3 text-navy-700/80 dark:text-slate-300">
-          Pick one of {cvTemplates.length} templates, fill in eight short steps and watch your CV take shape on
+          Pick one of {cvTemplates.length} templates, fill in a few short steps and watch your CV take shape on
           a real A4 page. Download it as a PDF or Word file when you are happy. Free, no account, and
           everything stays in your browser.
         </p>

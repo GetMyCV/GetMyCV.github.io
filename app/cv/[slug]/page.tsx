@@ -3,6 +3,7 @@ import Link from 'next/link';
 import CvDocument, { A4_HEIGHT, A4_WIDTH } from '@/components/CvDocument';
 import DemoBanner from '@/components/DemoBanner';
 import ScaledSheet from '@/components/ScaledSheet';
+import SampleAtsPanel from '@/components/ats/SampleAtsPanel';
 import { cvPdfPath, cvs, getCv } from '@/content/cvs';
 import JsonLd, { Breadcrumbs } from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/metadata';
@@ -106,6 +107,7 @@ export default async function CvSamplePage({ params }: Params) {
             footer="Sample CV by GetMyCv · The person shown is fictional"
           />
         </ScaledSheet>
+        <SampleAtsPanel cv={cv} layout={cv.layout} accent={cv.accent} />
       </div>
     </div>
   );
